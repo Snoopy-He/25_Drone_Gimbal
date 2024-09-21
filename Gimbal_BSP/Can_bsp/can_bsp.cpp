@@ -125,27 +125,3 @@ void HAL_CAN_RxFifo0MsgPendingCallback(CAN_HandleTypeDef *hcan)
 
     }
 }
-
-void chassis_cmd(int16_t Motor_Id,int16_t motor_set)
-{
-    uint32_t Send_Mail_Box = 0;
-    CAN_TxHeaderTypeDef Chassis_Tx_Message;
-    uint8_t chassis_can_send_message[8];
-
-    Chassis_Tx_Message.DLC = 0x08;
-    Chassis_Tx_Message.IDE = CAN_ID_STD;
-    Chassis_Tx_Message.StdId = Motor_Id;
-    Chassis_Tx_Message.RTR = CAN_RTR_DATA;
-
-    chassis_can_send_message[0] = motor_set >> 8;
-    chassis_can_send_message[1] = motor_set;
-    chassis_can_send_message[2] = motor_set >> 8;;
-    chassis_can_send_message[3] = motor_set;
-    chassis_can_send_message[4] = motor_set >> 8;;
-    chassis_can_send_message[5] = motor_set;
-    chassis_can_send_message[6] = 0;
-    chassis_can_send_message[7] = 0;
-
-    HAL_CAN_AddTxMessage(&hcan1,&Chassis_Tx_Message,chassis_can_send_message,&Send_Mail_Box);
-    HAL_CAN_AddTxMessage(&hcan2,&Chassis_Tx_Message,chassis_can_send_message,&Send_Mail_Box);
-}
