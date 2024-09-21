@@ -121,8 +121,6 @@ void HAL_CAN_RxFifo0MsgPendingCallback(CAN_HandleTypeDef *hcan)
             YawMotor_Data.Speed = rx_buf[2] << 8 | rx_buf[3];
             YawMotor_Data.Torque = rx_buf[4] << 8 | rx_buf[5];
             YawMotor_Data.Temperature = rx_buf[6];
-
-
         }
 
     }
