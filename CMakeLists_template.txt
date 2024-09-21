@@ -52,7 +52,8 @@ include_directories(${includes})
 include_directories(Gimbal_BSP/Remote_bsp
                     Gimbal_BSP/Can_bsp
                     User/Framework/RemoteC
-                    User/Framework/PID)
+                    User/Framework/PID
+                    User/Motor)
 
 
 add_definitions(${defines})
@@ -71,10 +72,12 @@ add_executable($${PROJECT_NAME}.elf $${SOURCES} $${LINKER_SCRIPT}
               Gimbal_BSP/Remote_bsp/remote_bsp.h
               Gimbal_BSP/Can_bsp/can_bsp.cpp
               Gimbal_BSP/Can_bsp/can_bsp.h
-              User/RemoteC/remotec.cpp
-              User/RemoteC/remotec.h
+              User/Framework/RemoteC/remotec.cpp
+              User/Framework/RemoteC/remotec.h
               User/Framework/PID/pid.cpp
-              User/Framework/PID/pid.h)
+              User/Framework/PID/pid.h
+              User/Motor/motor.cpp
+              User/Motor/motor.h)
 
 set(HEX_FILE $${PROJECT_BINARY_DIR}/$${PROJECT_NAME}.hex)
 set(BIN_FILE $${PROJECT_BINARY_DIR}/$${PROJECT_NAME}.bin)

@@ -14,5 +14,6 @@ int main(void)
     Can_Filter_Init();
     while (1)
     {
+        chassis_cmd(0x2FE,1000);
     }
 }

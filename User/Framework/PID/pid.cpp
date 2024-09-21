@@ -63,7 +63,7 @@ void PIDc::PID_Update(PID_t *WhichPID,float NowInput)
 }
 
 /*
-	* @name   PID_GetPositionPID
+	* @name   PID_PositionPID
 	* @brief  位置式PID
 	* @param  WhichPID PID结构体指针
     * @retval None
@@ -72,7 +72,8 @@ float PIDc::PID_PositionPID(PID_t *WhichPID)
 {
 
     WhichPID->PID_Out =
-            WhichPID->Kp1 * WhichPID->PID_Err_now + WhichPID->Kd1 * (WhichPID->PID_Err_now - WhichPID->PID_Err_last);
+            WhichPID->Kp1 * WhichPID->PID_Err_now +
+            WhichPID->Kd1 * (WhichPID->PID_Err_now - WhichPID->PID_Err_last);
     WhichPID->PID_Out += (WhichPID->PID_Err_all * WhichPID->Ki1);
 
     if (WhichPID->PID_Out >= WhichPID->PID_OutMax)   //PID输出限幅
@@ -94,7 +95,34 @@ float PIDc::PID_PositionPID(PID_t *WhichPID)
     return WhichPID->PID_Out;
 }
 
+
+/*
+	* @name   PID_IncrementPID
+	* @brief  增量式PID
+	* @param  WhichPID PID结构体指针
+    * @retval None
+*/
 float PIDc::IncrementPID(PID_t *WhichPID)
 {
+    WhichPID->PID_Out =
+            WhichPID->Kp1 * (WhichPID->PID_Err_now - WhichPID->PID_Err_last) +
+            WhichPID->Kd1 * (WhichPID->PID_Err_now - 2 * WhichPID->PID_Err_last + WhichPID->PID_Err_lastlast);
+    WhichPID->PID_Out += (WhichPID->PID_Err_all * WhichPID->Ki1);
+    if (WhichPID->PID_Out >= WhichPID->PID_OutMax)   //PID输出限幅
+        WhichPID->PID_Out = WhichPID->PID_OutMax;
+    if (WhichPID->PID_Out <= -WhichPID->PID_OutMax)
+        WhichPID->PID_Out = -WhichPID->PID_OutMax;
 
+    if (WhichPID->PID_Out - WhichPID->PID_lastout > WhichPID->PID_OutStep)    //PID输出步长限制
+    {
+        WhichPID->PID_Out = WhichPID->PID_lastout + WhichPID->PID_OutStep;
+    }
+    if (WhichPID->PID_Out - WhichPID->PID_lastout < -WhichPID->PID_OutStep)
+    {
+        WhichPID->PID_Out = WhichPID->PID_lastout + -WhichPID->PID_OutStep;
+    }
+
+    WhichPID->PID_lastout = WhichPID->PID_Out;
+
+    return WhichPID->PID_Out;
 }

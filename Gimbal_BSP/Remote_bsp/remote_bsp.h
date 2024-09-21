@@ -69,6 +69,8 @@ typedef struct
 
 } RC_ctrl_t;
 
+extern RC_ctrl_t rc_ctrl;
+
 #ifdef __cplusplus
 class remote_bsp {
 

@@ -50,7 +50,7 @@ public:
     void PID_Init(PID_t *WhichPID);
     void PID_Update(PID_t *WhichPID,float NowInput);
     float PID_PositionPID(PID_t *WhichPID);
-    float IncrementPID(PID_t *WhichPID)
+    float IncrementPID(PID_t *WhichPID);
 
 };
 
