@@ -1,5 +1,5 @@
 //
-// Created by 29358 on 2024/9/21.
+// Created by Snoopy on 2024/9/21.
 //
 
 #ifndef INC_2024_GIMBAL_REMOTEC_H
@@ -11,15 +11,9 @@ extern "C" {
 
 #include "stm32f4xx_hal.h"
 #include "usart.h"
+#include "remote_bsp.h"
 #include <stdint.h>
 
-#define SBUS_RX_BUF_NUM 36u
-
-#define RC_FRAME_LENGTH 18u
-
-#define RC_CH_VALUE_MIN         ((uint16_t)364)
-#define RC_CH_VALUE_OFFSET      ((uint16_t)1024)
-#define RC_CH_VALUE_MAX         ((uint16_t)1684)
 
 /* ----------------------- RC Switch Definition----------------------------- */
 #define RC_SW_UP                ((uint16_t)1)
@@ -45,28 +39,7 @@ extern "C" {
 #define KEY_PRESSED_OFFSET_C            ((uint16_t)1 << 13)
 #define KEY_PRESSED_OFFSET_V            ((uint16_t)1 << 14)
 #define KEY_PRESSED_OFFSET_B            ((uint16_t)1 << 15)
-/* ----------------------- Data Struct ------------------------------------- */
-typedef struct
-{
-    struct
-    {
-        int16_t ch[5];
-        char s[2];
-    } rc;
-    struct
-    {
-        int16_t x;
-        int16_t y;
-        int16_t z;
-        uint8_t press_l;
-        uint8_t press_r;
-    } mouse;
-    struct
-    {
-        uint16_t v;
-    } key;
 
-} RC_ctrl_t;
 
 /* ----------------------- Internal Data ----------------------------------- */
 
@@ -91,7 +64,6 @@ extern void REMOTEC_Init(void);
   * @param[in]      none
   * @retval         遥控器数据指针
   */
-extern const RC_ctrl_t *get_remote_control_point(void);
 void REMOTEC_UartIrqHandler(void);
 
 #ifdef __cplusplus

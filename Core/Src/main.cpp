@@ -1,14 +1,17 @@
 //
-// Created by 29358 on 2024/9/21.
+// Created by Snoopy on 2024/9/21.
 //
 #include "main.h"
-#include "../../User/RemoteC/remotec.h"
+#include "remotec.h"
+#include "can_bsp.h"
 
 
 int main(void)
 {
     main_Init();
     REMOTEC_Init();
+    Can_Init();
+    Can_Filter_Init();
     while (1)
     {
     }

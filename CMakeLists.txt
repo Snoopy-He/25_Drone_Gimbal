@@ -19,9 +19,9 @@ set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_C_STANDARD 11)
 
 #Uncomment for hardware floating point
-#add_compile_definitions(ARM_MATH_CM4;ARM_MATH_MATRIX_CHECK;ARM_MATH_ROUNDING)
-#add_compile_options(-mfloat-abi=hard -mfpu=fpv4-sp-d16)
-#add_link_options(-mfloat-abi=hard -mfpu=fpv4-sp-d16)
+add_compile_definitions(ARM_MATH_CM4;ARM_MATH_MATRIX_CHECK;ARM_MATH_ROUNDING)
+add_compile_options(-mfloat-abi=hard -mfpu=fpv4-sp-d16)
+add_link_options(-mfloat-abi=hard -mfpu=fpv4-sp-d16)
 
 #Uncomment for software floating point
 #add_compile_options(-mfloat-abi=soft)
@@ -51,7 +51,9 @@ endif ()
 
 include_directories(Core/Inc Drivers/STM32F4xx_HAL_Driver/Inc Drivers/STM32F4xx_HAL_Driver/Inc/Legacy Drivers/CMSIS/Device/ST/STM32F4xx/Include Drivers/CMSIS/Include Middlewares/Third_Party/FreeRTOS/Source/include Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM4F)
 include_directories(Gimbal_BSP/Remote_bsp
-                    User/RemoteC)
+                    Gimbal_BSP/Can_bsp
+                    User/Framework/RemoteC
+                    User/Framework/PID)
 
 
 add_definitions(-DDEBUG -DUSE_HAL_DRIVER -DSTM32F407xx)
@@ -65,11 +67,14 @@ add_link_options(-mcpu=cortex-m4 -mthumb -mthumb-interwork)
 add_link_options(-T ${LINKER_SCRIPT})
 
 add_executable(${PROJECT_NAME}.elf ${SOURCES} ${LINKER_SCRIPT}
-              Core/Src/main.cpp
-              User/RemoteC/remotec.cpp
-              User/RemoteC/remotec.h
-              Gimbal_BSP/Remote_bsp/remote_bsp.cpp
-              Gimbal_BSP/Remote_bsp/remote_bsp.h)
+        Core/Src/main.cpp
+        User/Framework/RemoteC/remotec.cpp
+        User/Framework/RemoteC/remotec.h
+        Gimbal_BSP/Remote_bsp/remote_bsp.cpp
+        Gimbal_BSP/Remote_bsp/remote_bsp.h
+        Gimbal_BSP/Can_bsp/can_bsp.cpp
+        User/Framework/PID/pid.cpp
+        User/Framework/PID/pid.h)
 
 set(HEX_FILE ${PROJECT_BINARY_DIR}/${PROJECT_NAME}.hex)
 set(BIN_FILE ${PROJECT_BINARY_DIR}/${PROJECT_NAME}.bin)
