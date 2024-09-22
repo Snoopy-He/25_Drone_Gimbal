@@ -53,6 +53,7 @@ include_directories(Gimbal_BSP/Remote_bsp
                     Gimbal_BSP/Can_bsp
                     User/Framework/RemoteC
                     User/Framework/PID
+                    User/Framework/Debug
                     User/Motor)
 
 
@@ -76,6 +77,8 @@ add_executable($${PROJECT_NAME}.elf $${SOURCES} $${LINKER_SCRIPT}
               User/Framework/RemoteC/remotec.h
               User/Framework/PID/pid.cpp
               User/Framework/PID/pid.h
+              User/Framework/Debug/debug.cpp
+              User/Framework/Debug/debug.h
               User/Motor/motor.cpp
               User/Motor/motor.h)
 

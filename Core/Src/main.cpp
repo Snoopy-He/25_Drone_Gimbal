@@ -16,6 +16,7 @@ int main(void)
     Can_Filter_Init();
     while (1)
     {
-        Can_Send(0x200,500,500,0,0);
+        Can_Send(0x1FE,1000,0,0,0);
+        //usart_printf("sending\r\n");
     }
 }

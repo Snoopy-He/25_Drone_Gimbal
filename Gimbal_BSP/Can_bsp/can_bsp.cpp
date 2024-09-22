@@ -3,6 +3,7 @@
 //
 
 #include "can_bsp.h"
+#include "../../User/Framework/Debug/debug.h"
 
 int16_t Can_Tx_Data[5];
 Rx_Data FricL_Data;
@@ -17,9 +18,9 @@ void Can_Init(void)
     HAL_CAN_Start(&hcan1);     //开启can1
     HAL_CAN_ActivateNotification(&hcan1,CAN_IT_RX_FIFO0_MSG_PENDING);  //开启中断
 
-//    __HAL_RCC_CAN2_CLK_ENABLE();     //开启can2的时钟
-//    HAL_CAN_Start(&hcan2);     //开启can2
-//    HAL_CAN_ActivateNotification(&hcan2,CAN_IT_RX_FIFO0_MSG_PENDING);  //开启中断
+    __HAL_RCC_CAN2_CLK_ENABLE();     //开启can2的时钟
+    HAL_CAN_Start(&hcan2);     //开启can2
+    HAL_CAN_ActivateNotification(&hcan2,CAN_IT_RX_FIFO0_MSG_PENDING);  //开启中断
 }
 
 
@@ -28,8 +29,7 @@ void Can_Filter_Init(void)
 {
     CAN_FilterTypeDef can_filter_st;
     can_filter_st.FilterBank = 0;
-    can_filter_st.FilterActivation = ENABLE;
-//    can_filter_st.FilterBank =
+    can_filter_st.FilterActivation = CAN_FILTER_ENABLE;
     can_filter_st.FilterMode = CAN_FILTERMODE_IDMASK;
     can_filter_st.FilterScale = CAN_FILTERSCALE_32BIT;
     can_filter_st.FilterIdHigh = 0x0000;
@@ -37,13 +37,12 @@ void Can_Filter_Init(void)
     can_filter_st.FilterMaskIdHigh = 0x0000;
     can_filter_st.FilterMaskIdLow = 0x0000;
     can_filter_st.FilterFIFOAssignment = CAN_RX_FIFO0;
+    can_filter_st.SlaveStartFilterBank = 14;
     HAL_CAN_ConfigFilter(&hcan1, &can_filter_st);
     HAL_CAN_Start(&hcan1);
+    HAL_CAN_ActivateNotification(&hcan1, CAN_IT_RX_FIFO0_MSG_PENDING);
 
-    can_filter_st.FilterBank = 14;
-    can_filter_st.SlaveStartFilterBank = 14;
-    HAL_CAN_ConfigFilter(&hcan2, &can_filter_st);
-    HAL_CAN_Start(&hcan2);
+
 }
 
 void Can_Send(int16_t ID,int16_t Mess_1,int16_t Mess_2,int16_t Mess_3,int16_t Mess_4)
@@ -71,12 +70,15 @@ void Can_Send(int16_t ID,int16_t Mess_1,int16_t Mess_2,int16_t Mess_3,int16_t Me
 
 }
 
-void HAL_CAN_RxFifo0MsgPendingCallback(CAN_HandleTypeDef *hcan)
+
+void Can_bsp_IRQHandler(void)
 {
+    usart_printf("ok\r\n");
     CAN_RxHeaderTypeDef rx_header;
     uint8_t rx_buf[8];
-    HAL_CAN_GetRxMessage(hcan, CAN_RX_FIFO0, &rx_header, rx_buf);
+    HAL_CAN_GetRxMessage(&hcan1, CAN_RX_FIFO0, &rx_header, rx_buf);
     int16_t ID = rx_header.StdId;
+    //usart_printf("okok\r\n");
 
     switch(ID)   //检测不同ID号，适应不同电机的数据
     {
@@ -134,4 +136,11 @@ void HAL_CAN_RxFifo0MsgPendingCallback(CAN_HandleTypeDef *hcan)
             usart_printf("Error\r\n");
             break;
     }
+}
+
+void HAL_CAN_RxFifo0MsgPendingCallback(CAN_HandleTypeDef *hcan)
+{
+    //Can_bsp_IRQHandler();
+    usart_printf("okok\r\n");
+    LED_ON();
 }

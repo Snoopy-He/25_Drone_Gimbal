@@ -25,6 +25,7 @@
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 #include "remotec.h"
+
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/

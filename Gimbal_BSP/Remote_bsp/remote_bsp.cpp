@@ -169,8 +169,8 @@ static void sbus_to_rc(volatile const uint8_t *sbus_buf, RC_ctrl_t *rc_ctrl)
     rc_ctrl->rc.ch[2] -= RC_CH_VALUE_OFFSET;
     rc_ctrl->rc.ch[3] -= RC_CH_VALUE_OFFSET;
     rc_ctrl->rc.ch[4] -= RC_CH_VALUE_OFFSET;
-    usart_printf("%d, %d, %d, %d, %d, %d, %d\r\n", rc_ctrl->rc.ch[0], rc_ctrl->rc.ch[1], rc_ctrl->rc.ch[2], rc_ctrl->rc.ch[3], rc_ctrl->rc.ch[4],rc_ctrl->rc.s[0], rc_ctrl->rc.s[1]);
     RC_DataHandle(rc_ctrl);
+    //usart_printf("%d, %d, %d, %d, %d, %d, %d\r\n", rc_ctrl->rc.ch[0], rc_ctrl->rc.ch[1], rc_ctrl->rc.ch[2], rc_ctrl->rc.ch[3], rc_ctrl->rc.ch[4],rc_ctrl->rc.s[0], rc_ctrl->rc.s[1]);
 }
 
 void RC_DataHandle(RC_ctrl_t *rc_ctrl)  //抑制零漂

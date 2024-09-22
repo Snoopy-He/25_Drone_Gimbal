@@ -5,6 +5,11 @@
 #ifndef INC_2024_GIMBAL_CAN_BSP_H
 #define INC_2024_GIMBAL_CAN_BSP_H
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+
 #include "can.h"
 #include "usart.h"
 
@@ -17,6 +22,7 @@
 void Can_Init(void);
 void Can_Filter_Init(void);
 void Can_Send(int16_t ID,int16_t Mess_1,int16_t Mess_2,int16_t Mess_3,int16_t Mess_4);
+void Can_bsp_IRQHandler(void);
 
 typedef struct
 {
@@ -40,6 +46,10 @@ extern int16_t Can_Tx_Data[5];
 class can_bsp {
 
 };
+#endif
+
+#ifdef __cplusplus
+}
 #endif
 
 #endif //INC_2024_GIMBAL_CAN_BSP_H
