@@ -6,6 +6,8 @@
 #include "can_bsp.h"
 
 
+
+
 int main(void)
 {
     main_Init();
@@ -14,6 +16,6 @@ int main(void)
     Can_Filter_Init();
     while (1)
     {
-        chassis_cmd(0x2FE,1000);
+        Can_Send(0x200,500,500,0,0);
     }
 }

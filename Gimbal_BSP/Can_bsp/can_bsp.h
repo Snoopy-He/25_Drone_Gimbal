@@ -8,16 +8,15 @@
 #include "can.h"
 #include "usart.h"
 
-#define YAW_MOTOR_ID       0x20
+#define YAW_MOTOR_ID       0x209
 #define PITCH_MOTOR_ID     0x206
-#define L_FRIC_ID          0x209
+#define L_FRIC_ID          0x202
 #define R_FRIC_ID          0x201
 #define RAMMC_ID           0x203
 
 void Can_Init(void);
 void Can_Filter_Init(void);
-void chassis_cmd(int16_t Motor_Id,int16_t motor_set);
-void Can_Send(int16_t Can_Tx_Data[5]);
+void Can_Send(int16_t ID,int16_t Mess_1,int16_t Mess_2,int16_t Mess_3,int16_t Mess_4);
 
 typedef struct
 {
