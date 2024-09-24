@@ -8,15 +8,15 @@
 
 
 
+
 int main(void)
 {
     main_Init();
     REMOTEC_Init();
     Can_Init();
-    Can_Filter_Init();
+    //os_Init();
+    Can_Send(0x1FE,1000,0,0,0);
     while (1)
     {
-        Can_Send(0x1FE,1000,0,0,0);
-        //usart_printf("sending\r\n");
     }
 }

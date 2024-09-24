@@ -55,7 +55,9 @@ include_directories(Gimbal_BSP/Remote_bsp
                     User/Framework/RemoteC
                     User/Framework/PID
                     User/Framework/Debug
-                    User/Motor)
+                    User/Motor
+                    Tasks/Gimbal_Motor
+                    Tasks/Printf)
 
 
 add_definitions(-DDEBUG -DUSE_HAL_DRIVER -DSTM32F407xx)
@@ -80,8 +82,14 @@ add_executable(${PROJECT_NAME}.elf ${SOURCES} ${LINKER_SCRIPT}
               User/Framework/PID/pid.h
               User/Framework/Debug/debug.cpp
               User/Framework/Debug/debug.h
+              User/Framework/Gimbal/gimbal.cpp
+              User/Framework/Gimbal/gimbal.h
               User/MotorC/motor.cpp
-              User/MotorC/motor.h)
+              User/MotorC/motor.h
+              Tasks/Gimbal_Motor/Gimbal_Motor_Task.cpp
+              Tasks/Gimbal_Motor/Gimbal_Motor_Task.h
+              Tasks/Printf/Printf_Task.cpp
+              Tasks/Printf/Printf_Task.h)
 
 set(HEX_FILE ${PROJECT_BINARY_DIR}/${PROJECT_NAME}.hex)
 set(BIN_FILE ${PROJECT_BINARY_DIR}/${PROJECT_NAME}.bin)

@@ -48,6 +48,8 @@
 
 /* USER CODE END Variables */
 osThreadId defaultTaskHandle;
+osThreadId gimbal_motorHandle;
+osThreadId printfHandle;
 
 /* Private function prototypes -----------------------------------------------*/
 /* USER CODE BEGIN FunctionPrototypes */
@@ -55,6 +57,8 @@ osThreadId defaultTaskHandle;
 /* USER CODE END FunctionPrototypes */
 
 void StartDefaultTask(void const * argument);
+extern void Gimbal_Motor_Task(void const * argument);
+extern void Printf_Task(void const * argument);
 
 void MX_FREERTOS_Init(void); /* (MISRA C 2004 rule 8.1) */
 
@@ -104,6 +108,14 @@ void MX_FREERTOS_Init(void) {
   /* definition and creation of defaultTask */
   osThreadDef(defaultTask, StartDefaultTask, osPriorityNormal, 0, 128);
   defaultTaskHandle = osThreadCreate(osThread(defaultTask), NULL);
+
+  /* definition and creation of gimbal_motor */
+  osThreadDef(gimbal_motor, Gimbal_Motor_Task, osPriorityHigh, 0, 256);
+  gimbal_motorHandle = osThreadCreate(osThread(gimbal_motor), NULL);
+
+  /* definition and creation of printf */
+  osThreadDef(printf, Printf_Task, osPriorityIdle, 0, 256);
+  printfHandle = osThreadCreate(osThread(printf), NULL);
 
   /* USER CODE BEGIN RTOS_THREADS */
   /* add threads, ... */

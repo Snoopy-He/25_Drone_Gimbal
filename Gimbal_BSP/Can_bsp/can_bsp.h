@@ -20,6 +20,7 @@ extern "C" {
 #define RAMMC_ID           0x203
 
 void Can_Init(void);
+void Can_bsp_Init(void);
 void Can_Filter_Init(void);
 void Can_Send(int16_t ID,int16_t Mess_1,int16_t Mess_2,int16_t Mess_3,int16_t Mess_4);
 void Can_bsp_IRQHandler(void);

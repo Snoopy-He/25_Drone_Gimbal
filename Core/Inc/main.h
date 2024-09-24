@@ -54,6 +54,7 @@ void Error_Handler(void);
 
 /* USER CODE BEGIN EFP */
 void main_Init(void);
+void os_Init(void);
 /* USER CODE END EFP */
 
 /* Private defines -----------------------------------------------------------*/

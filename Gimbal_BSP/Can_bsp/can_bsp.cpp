@@ -3,7 +3,6 @@
 //
 
 #include "can_bsp.h"
-#include "../../User/Framework/Debug/debug.h"
 
 int16_t Can_Tx_Data[5];
 Rx_Data FricL_Data;
@@ -12,14 +11,14 @@ Rx_Data Rammc_Data;
 Rx_Data YawMotor_Data;
 Rx_Data PitchMotor_Data;
 
-void Can_Init(void)
+void Can_bsp_Init(void)
 {
     __HAL_RCC_CAN1_CLK_ENABLE();     //开启can1的时钟
     HAL_CAN_Start(&hcan1);     //开启can1
     HAL_CAN_ActivateNotification(&hcan1,CAN_IT_RX_FIFO0_MSG_PENDING);  //开启中断
 
-    __HAL_RCC_CAN2_CLK_ENABLE();     //开启can2的时钟
-    HAL_CAN_Start(&hcan2);     //开启can2
+    __HAL_RCC_CAN2_CLK_ENABLE();     //开启can1的时钟
+    HAL_CAN_Start(&hcan2);     //开启can1
     HAL_CAN_ActivateNotification(&hcan2,CAN_IT_RX_FIFO0_MSG_PENDING);  //开启中断
 }
 
@@ -37,13 +36,23 @@ void Can_Filter_Init(void)
     can_filter_st.FilterMaskIdHigh = 0x0000;
     can_filter_st.FilterMaskIdLow = 0x0000;
     can_filter_st.FilterFIFOAssignment = CAN_RX_FIFO0;
-    can_filter_st.SlaveStartFilterBank = 14;
+    can_filter_st.SlaveStartFilterBank = 0;
     HAL_CAN_ConfigFilter(&hcan1, &can_filter_st);
     HAL_CAN_Start(&hcan1);
     HAL_CAN_ActivateNotification(&hcan1, CAN_IT_RX_FIFO0_MSG_PENDING);
 
-
+    can_filter_st.SlaveStartFilterBank = 14;
+    HAL_CAN_ConfigFilter(&hcan2, &can_filter_st);
+    HAL_CAN_Start(&hcan2);
+    HAL_CAN_ActivateNotification(&hcan2, CAN_IT_RX_FIFO0_MSG_PENDING);
 }
+
+void Can_Init(void)
+{
+    Can_bsp_Init();
+    Can_Filter_Init();
+}
+
 
 void Can_Send(int16_t ID,int16_t Mess_1,int16_t Mess_2,int16_t Mess_3,int16_t Mess_4)
 {
@@ -73,7 +82,7 @@ void Can_Send(int16_t ID,int16_t Mess_1,int16_t Mess_2,int16_t Mess_3,int16_t Me
 
 void Can_bsp_IRQHandler(void)
 {
-    usart_printf("ok\r\n");
+    //usart_printf("ok\r\n");
     CAN_RxHeaderTypeDef rx_header;
     uint8_t rx_buf[8];
     HAL_CAN_GetRxMessage(&hcan1, CAN_RX_FIFO0, &rx_header, rx_buf);
@@ -140,7 +149,8 @@ void Can_bsp_IRQHandler(void)
 
 void HAL_CAN_RxFifo0MsgPendingCallback(CAN_HandleTypeDef *hcan)
 {
+    Can_bsp_IRQHandler();
     //Can_bsp_IRQHandler();
-    usart_printf("okok\r\n");
-    LED_ON();
+    //usart_printf("okok\r\n");
+    //LED_ON();
 }
