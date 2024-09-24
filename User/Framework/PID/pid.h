@@ -48,7 +48,7 @@ typedef struct
 class PIDc {
 public:
     void PID_Init(PID_t *WhichPID);
-    void PID_Update(PID_t *WhichPID,float NowInput);
+    void PID_Update(PID_t *WhichPID,float NowInput,float Target);
     float PID_PositionPID(PID_t *WhichPID);
     float IncrementPID(PID_t *WhichPID);
 

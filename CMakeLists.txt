@@ -50,12 +50,12 @@ else ()
 endif ()
 
 include_directories(Core/Inc Drivers/STM32F4xx_HAL_Driver/Inc Drivers/STM32F4xx_HAL_Driver/Inc/Legacy Drivers/CMSIS/Device/ST/STM32F4xx/Include Drivers/CMSIS/Include Middlewares/Third_Party/FreeRTOS/Source/include Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM4F)
-include_directories(Gimbal_BSP/Remote_bsp
-                    Gimbal_BSP/Can_bsp
+include_directories(User/Framework/Gimbal_BSP/Remote_bsp
+                    User/Framework/Gimbal_BSP/Can_bsp
                     User/Framework/RemoteC
                     User/Framework/PID
                     User/Framework/Debug
-                    User/Motor
+                    User/MotorC
                     Tasks/Gimbal_Motor
                     Tasks/Printf)
 
@@ -72,10 +72,10 @@ add_link_options(-T ${LINKER_SCRIPT})
 
 add_executable(${PROJECT_NAME}.elf ${SOURCES} ${LINKER_SCRIPT}
               Core/Src/main.cpp
-              Gimbal_BSP/Remote_bsp/remote_bsp.cpp
-              Gimbal_BSP/Remote_bsp/remote_bsp.h
-              Gimbal_BSP/Can_bsp/can_bsp.cpp
-              Gimbal_BSP/Can_bsp/can_bsp.h
+              User/Framework/Gimbal_BSP/Remote_bsp/remote_bsp.cpp
+              User/Framework/Gimbal_BSP/Remote_bsp/remote_bsp.h
+              User/Framework/Gimbal_BSP/Can_bsp/can_bsp.cpp
+              User/Framework/Gimbal_BSP/Can_bsp/can_bsp.h
               User/Framework/RemoteC/remotec.cpp
               User/Framework/RemoteC/remotec.h
               User/Framework/PID/pid.cpp

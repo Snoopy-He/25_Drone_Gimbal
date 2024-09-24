@@ -1,5 +1,5 @@
 //
-// Created by 29358 on 2024/9/21.
+// Created by Snoopy on 2024/9/21.
 //
 
 #ifndef INC_2024_GIMBAL_MOTOR_H
@@ -7,8 +7,14 @@
 
 #include "remotec.h"
 #include "can_bsp.h"
+#include "pid.h"
 
-class motor {
+
+class MotorC {
+private:
+
+public:
+    PIDc PID;
 
 };
 

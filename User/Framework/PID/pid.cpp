@@ -37,9 +37,10 @@ void PIDc::PID_Init(PID_t *WhichPID)
 	* @param  WhichPID PID结构体指针,NowInput 当前PID输入值
   	* @retval None
 */
-void PIDc::PID_Update(PID_t *WhichPID,float NowInput)
+void PIDc::PID_Update(PID_t *WhichPID,float NowInput,float Target)
 {
     WhichPID->PID_Input = NowInput;
+    WhichPID->PID_Target = Target;
     WhichPID->PID_Err_lastlast = WhichPID->PID_Err_last;
     WhichPID->PID_Err_last = WhichPID->PID_Err_now;
     WhichPID->PID_Err_now = WhichPID->PID_Target - WhichPID->PID_Input;
