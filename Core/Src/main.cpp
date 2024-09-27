@@ -4,7 +4,8 @@
 #include "main.h"
 #include "remotec.h"
 #include "can_bsp.h"
-
+#include "gimbal.h"
+#include "debug.h"
 
 
 
@@ -14,8 +15,9 @@ int main(void)
     main_Init();
     REMOTEC_Init();
     Can_Init();
-    //os_Init();
-    Can_Send(0x1FE,1000,0,0,0);
+    Algorithm_Init();
+    Debug_Init();
+    os_Init();
     while (1)
     {
     }

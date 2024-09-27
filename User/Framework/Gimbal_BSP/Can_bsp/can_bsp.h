@@ -12,6 +12,8 @@ extern "C" {
 
 #include "can.h"
 #include "usart.h"
+#include "pid.h"
+#include "debug.h"
 
 #define YAW_MOTOR_ID       0x209
 #define PITCH_MOTOR_ID     0x206

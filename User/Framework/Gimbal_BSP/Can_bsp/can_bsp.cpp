@@ -11,6 +11,7 @@ Rx_Data Rammc_Data;
 Rx_Data YawMotor_Data;
 Rx_Data PitchMotor_Data;
 
+
 void Can_bsp_Init(void)
 {
     __HAL_RCC_CAN1_CLK_ENABLE();     //开启can1的时钟
@@ -97,7 +98,7 @@ void Can_bsp_IRQHandler(void)
             FricL_Data.Speed = rx_buf[2] << 8 | rx_buf[3];
             FricL_Data.Torque = rx_buf[4] << 8 | rx_buf[5];
             FricL_Data.Temperature = rx_buf[6];
-            usart_printf("%X,%d,%d,%d\r\n", ID,FricL_Data.Angle,FricL_Data.Speed,FricL_Data.Torque,FricL_Data.Temperature);
+            //usart_printf("%X,%d,%d,%d\r\n", ID,FricL_Data.Angle,FricL_Data.Speed,FricL_Data.Torque,FricL_Data.Temperature);
             break;
         }
 
@@ -107,7 +108,7 @@ void Can_bsp_IRQHandler(void)
             FricR_Data.Speed = rx_buf[2] << 8 | rx_buf[3];
             FricR_Data.Torque = rx_buf[4] << 8 | rx_buf[5];
             FricR_Data.Temperature = rx_buf[6];
-            usart_printf("%X,%d,%d,%d\r\n", ID,FricR_Data.Angle,FricR_Data.Speed,FricR_Data.Torque,FricR_Data.Temperature);
+            //usart_printf("%X,%d,%d,%d\r\n", ID,FricR_Data.Angle,FricR_Data.Speed,FricR_Data.Torque,FricR_Data.Temperature);
             break;
         }
 
@@ -117,7 +118,7 @@ void Can_bsp_IRQHandler(void)
             Rammc_Data.Speed = rx_buf[2] << 8 | rx_buf[3];
             Rammc_Data.Torque = rx_buf[4] << 8 | rx_buf[5];
             Rammc_Data.Temperature = 0;    //无温度值反馈
-            usart_printf("%X,%d,%d,%d\r\n", ID,Rammc_Data.Angle,Rammc_Data.Speed,Rammc_Data.Torque,Rammc_Data.Temperature);
+            //usart_printf("%X,%d,%d,%d\r\n", ID,Rammc_Data.Angle,Rammc_Data.Speed,Rammc_Data.Torque,Rammc_Data.Temperature);
             break;
         }
 
@@ -127,7 +128,7 @@ void Can_bsp_IRQHandler(void)
             PitchMotor_Data.Speed = rx_buf[2] << 8 | rx_buf[3];
             PitchMotor_Data.Torque = rx_buf[4] << 8 | rx_buf[5];
             PitchMotor_Data.Temperature = rx_buf[6];
-            usart_printf("%X,%d,%d,%d\r\n", ID,PitchMotor_Data.Angle,PitchMotor_Data.Speed,PitchMotor_Data.Torque,PitchMotor_Data.Temperature);
+            //usart_printf("%X,%d,%d,%d\r\n", ID,PitchMotor_Data.Angle,PitchMotor_Data.Speed,PitchMotor_Data.Torque,PitchMotor_Data.Temperature);
             break;
         }
 
@@ -137,7 +138,7 @@ void Can_bsp_IRQHandler(void)
             YawMotor_Data.Speed = rx_buf[2] << 8 | rx_buf[3];
             YawMotor_Data.Torque = rx_buf[4] << 8 | rx_buf[5];
             YawMotor_Data.Temperature = rx_buf[6];
-            usart_printf("%X,%d,%d,%d\r\n", ID,YawMotor_Data.Angle,YawMotor_Data.Speed,YawMotor_Data.Torque,YawMotor_Data.Temperature);
+            //usart_printf("%X,%d,%d,%d\r\n", ID,YawMotor_Data.Angle,YawMotor_Data.Speed,YawMotor_Data.Torque,YawMotor_Data.Temperature);
             break;
         }
 
@@ -149,7 +150,9 @@ void Can_bsp_IRQHandler(void)
 
 void HAL_CAN_RxFifo0MsgPendingCallback(CAN_HandleTypeDef *hcan)
 {
+    //usart_printf("123\r\n");
     Can_bsp_IRQHandler();
+    //Can_Send(0X1FE,1000,0,1000,1000);
     //Can_bsp_IRQHandler();
     //usart_printf("okok\r\n");
     //LED_ON();

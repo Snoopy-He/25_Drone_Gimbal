@@ -9,6 +9,11 @@
 extern "C" {
 #endif
 
+#include "FreeRTOS.h"
+#include "task.h"
+#include "can_bsp.h"
+#include "debug.h"
+
 void Printf_Task(void const * argument);
 
 #ifdef __cplusplus

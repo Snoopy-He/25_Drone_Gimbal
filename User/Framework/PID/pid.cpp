@@ -12,18 +12,18 @@
 */
 void PIDc::PID_Init(PID_t *WhichPID)
 { //初始化PID的默认参数
-    WhichPID->Kp1 = 20.0;
-    WhichPID->Ki1 = 1;
-    WhichPID->Kd1 = 0;
-    WhichPID->PID_Err_now = 0.0;
-    WhichPID->PID_Err_last = 0.0;
-    WhichPID->PID_Err_lastlast = 0.0;
-    WhichPID->PID_Err_all = 0.0;
-    WhichPID->PID_Out = 0.0;
-    WhichPID->PID_lastout = 0.0;
-    WhichPID->PID_Target = 0.0;
-    WhichPID->PID_Input = 0.0;
-    WhichPID->PID_WorkType = 0;
+    WhichPID->Kp1 = 0.0f;
+    WhichPID->Ki1 = 0.0f;
+    WhichPID->Kd1 = 0.0f;
+    WhichPID->PID_Err_now = 0.0f;
+    WhichPID->PID_Err_last = 0.0f;
+    WhichPID->PID_Err_lastlast = 0.0f;
+    WhichPID->PID_Err_all = 0.0f;
+    WhichPID->PID_Out = 0.0f;
+    WhichPID->PID_lastout = 0.0f;
+    WhichPID->PID_Target = 0.0f;
+    WhichPID->PID_Input = 0.0f;
+    WhichPID->PID_WorkType = 0.0f;
 
     WhichPID->PID_Precision = PID_DEFAULT_PRECISION;
     WhichPID->PID_ErrAllMax = PID_DEFAULT_ERRALL_MAX;
@@ -103,7 +103,7 @@ float PIDc::PID_PositionPID(PID_t *WhichPID)
 	* @param  WhichPID PID结构体指针
     * @retval None
 */
-float PIDc::IncrementPID(PID_t *WhichPID)
+float PIDc::PID_IncrementPID(PID_t *WhichPID)
 {
     WhichPID->PID_Out =
             WhichPID->Kp1 * (WhichPID->PID_Err_now - WhichPID->PID_Err_last) +
@@ -126,4 +126,19 @@ float PIDc::IncrementPID(PID_t *WhichPID)
     WhichPID->PID_lastout = WhichPID->PID_Out;
 
     return WhichPID->PID_Out;
+}
+
+/*
+	* @name   Double_Param_PID
+	* @brief  串级PID
+	* @param  WhichPID PID结构体指针
+    * @retval None
+*/
+float PIDc::Double_Param_PID(PID_t *SpdParam,PID_t *PosParam)
+{
+    PID_PositionPID(SpdParam);
+    PID_Update(PosParam,SpdParam->PID_Out,2 * SpdParam->PID_Out);  //Target如此赋值是为让位置环的Erroe_Now和input相等，Error_Now=Target - NowInput
+    PID_PositionPID(PosParam);
+
+    return PosParam->PID_Out;
 }

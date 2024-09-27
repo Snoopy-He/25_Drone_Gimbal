@@ -16,9 +16,10 @@ void Gimbal_Motor_Task(void const * argument)
     for(;;)
     {
         CurrentTime = xTaskGetTickCount();
-        LED_ON();
+        //LED_ON();
 
-        Can_Send(0x1FE,1000,0,0,0);
+        Gimbal_loop();
+        //Can_Send(0X200,1000,0,0,0);
 
         vTaskDelayUntil(&CurrentTime, 2 / portTICK_RATE_MS);
     }

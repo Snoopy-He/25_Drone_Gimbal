@@ -6,6 +6,7 @@
 #define INC_2024_GIMBAL_PID_H
 
 #include "stm32f4xx_hal.h"
+#include "usart.h"
 
 #define PID_DEFAULT_PRECISION 0.0f         //控制精度，当目标速度与实际速度小于此值时，认为没有误差，使PID更稳定
 #define PID_DEFAULT_ERRALL_MAX 3000         //控制ERR_ALL最大值，否则ERR_ALL最大值过大，会使PID反应慢，不稳定，积分限幅
@@ -44,15 +45,19 @@ typedef struct
 } PID_t;
 
 
-
+#ifdef __cplusplus
 class PIDc {
+
 public:
     void PID_Init(PID_t *WhichPID);
     void PID_Update(PID_t *WhichPID,float NowInput,float Target);
     float PID_PositionPID(PID_t *WhichPID);
-    float IncrementPID(PID_t *WhichPID);
+    float PID_IncrementPID(PID_t *WhichPID);
+    float Double_Param_PID(PID_t *SpdParam,PID_t *PosParam);
+    PID_t SpdParam;
+    PID_t PosParam;
 
 };
-
+#endif
 
 #endif //INC_2024_GIMBAL_PID_H

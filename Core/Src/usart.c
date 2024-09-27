@@ -269,29 +269,5 @@ void HAL_UART_MspDeInit(UART_HandleTypeDef* uartHandle)
 }
 
 /* USER CODE BEGIN 1 */
-#ifdef __GNUC__
-#define PUTCHAR_PROTOTYPE int __io_putchar(int ch)
-#else
-#define PUTCHAR_PROTOTYPE int fputc(int ch, FILE *f)
-#endif
 
-PUTCHAR_PROTOTYPE
-{
-    HAL_UART_Transmit(&huart1, (uint8_t *) &ch, 1,0x1FFF);
-    return ch;
-}
-
-
-#define TX_BUF_SIZE 512
-static uint8_t send_buf[TX_BUF_SIZE];
-void usart_printf(const char *format, ...)
-{
-    va_list args;
-    uint32_t length;
-
-    va_start(args, format);
-    length = vsnprintf((char *)send_buf, TX_BUF_SIZE, (const char *)format, args);
-    va_end(args);
-    HAL_UART_Transmit_DMA(&huart1, (uint8_t *)send_buf, length);
-}
 /* USER CODE END 1 */

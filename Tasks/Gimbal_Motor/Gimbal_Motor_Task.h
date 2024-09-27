@@ -9,6 +9,8 @@
 extern "C" {
 #endif
 
+#include "gimbal.h"
+
 void Gimbal_Motor_Task(void const * argument);
 
 #ifdef __cplusplus
