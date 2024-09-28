@@ -65,8 +65,20 @@ void Pitch_PID_Init(void)
 
 void Yaw_PID_Init(void)
 {
-    Yaw_PID.PID_Init(&Rammc_PID.SpdParam);
-    Yaw_PID.PID_Init(&Rammc_PID.PosParam);
+    Yaw_PID.PID_Init(&Yaw_PID.SpdParam);
+    Yaw_PID.PID_Init(&Yaw_PID.PosParam);
+
+    Yaw_PID.SpdParam.Kp1 = 1.56f;
+    Yaw_PID.SpdParam.Ki1 = 0.0041f;
+    Yaw_PID.SpdParam.Kd1 = 10.0f;
+    Yaw_PID.SpdParam.PID_ErrAllMax = 100000;
+    Yaw_PID.SpdParam.PID_OutStep = 700;
+    Yaw_PID.SpdParam.PID_Vari_Spd_Min = 50;
+    Yaw_PID.SpdParam.PID_Vari_Spd_Max = 150;
+
+    Yaw_PID.PosParam.Kp1 = 1.45f;
+    Yaw_PID.PosParam.Ki1 = 0.0f;
+    Yaw_PID.PosParam.Kd1 = 0.0f;
 
 }
 

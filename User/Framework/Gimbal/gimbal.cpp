@@ -32,6 +32,7 @@ void Algorithm_Init(void)
     FricL_PID_Init();
     FricR_PID_Init();
     Rammc_PID_Init();
+    Yaw_PID_Init();
 
 }
 
@@ -64,24 +65,34 @@ void Algorithm_run(void)
     //PID_Debug_Set(&FricL_PID.SpdParam,&FricL_PID.PosParam);`
     //PID_Debug_Set(&FricR_PID.SpdParam,&FricR_PID.PosParam);
     //PID_Debug_Set(&Rammc_PID.SpdParam,&Rammc_PID.PosParam);
+    //PID_Debug_Set(&Yaw_PID.SpdParam,&Yaw_PID.PosParam);
+    Yaw_PID.PID_Update(&Yaw_PID.SpdParam,((float)YawMotor_Data.Angle)-4095.5,-(int16_t)(rc_ctrl.rc.ch[2] * 4));
     FricL_PID.PID_Update(&FricL_PID.SpdParam,FricL_Data.Speed,(int16_t)(rc_ctrl.rc.ch[0] * 7));
     FricR_PID.PID_Update(&FricR_PID.SpdParam,FricR_Data.Speed,(int16_t)(-(rc_ctrl.rc.ch[0] * 7)));
-    Rammc_PID.PID_Update(&Rammc_PID.SpdParam,Rammc_Data.Speed,(int16_t)(rc_ctrl.rc.ch[2] * 8));
+    //Rammc_PID.PID_Update(&Rammc_PID.SpdParam,Rammc_Data.Speed,(int16_t)(rc_ctrl.rc.ch[2] * 8));
 
-    can_send[2] = Rammc_PID.Double_Param_PID(&Rammc_PID.SpdParam,&Rammc_PID.PosParam);
-    can_send[1] = FricL_PID.Double_Param_PID(&FricL_PID.SpdParam,&FricL_PID.PosParam);
-    can_send[0] = FricR_PID.Double_Param_PID(&FricR_PID.SpdParam,&FricR_PID.PosParam);
+    can_send[3] = (int16_t)Yaw_PID.Double_Param_Pos_PID(&Yaw_PID.SpdParam,&Yaw_PID.PosParam);
+    can_send[2] = (int16_t)Rammc_PID.Double_Param_Pos_PID(&Rammc_PID.SpdParam,&Rammc_PID.PosParam);
+    can_send[1] = (int16_t)FricL_PID.Double_Param_Pos_PID(&FricL_PID.SpdParam,&FricL_PID.PosParam);
+    can_send[0] = (int16_t)FricR_PID.Double_Param_Pos_PID(&FricR_PID.SpdParam,&FricR_PID.PosParam);
 }
 
-void Motor_Command_Send(void)
+void Shoot_Command_Send(void)
 {
     Can_Send(SHOOT_ID,can_send[0],can_send[1],can_send[2],can_send[3]);
+}
+
+void Gimbal_Command_Send(void)
+{
+    Can_Send(GIMBAL_ID,can_send[0],can_send[1],can_send[2],can_send[3]);
+
 }
 
 void Gimbal_loop(void)
 {
     Get_CtrlData();
     Algorithm_run();
-    Motor_Command_Send();
+    Shoot_Command_Send();
+    Gimbal_Command_Send();
 
 }

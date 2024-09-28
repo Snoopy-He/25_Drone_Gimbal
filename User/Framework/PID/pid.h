@@ -7,6 +7,7 @@
 
 #include "stm32f4xx_hal.h"
 #include "usart.h"
+#include <stdlib.h>
 
 #define PID_DEFAULT_PRECISION 0.0f         //控制精度，当目标速度与实际速度小于此值时，认为没有误差，使PID更稳定
 #define PID_DEFAULT_ERRALL_MAX 3000         //控制ERR_ALL最大值，否则ERR_ALL最大值过大，会使PID反应慢，不稳定，积分限幅
@@ -42,6 +43,9 @@ typedef struct
     float PID_ErrAllMax; // PID积分限幅
     float PID_OutMax;     // PID输出限幅
     float PID_OutStep;     // PID输出步幅限制
+
+    float PID_Vari_Spd_Max;    //变速积分误差上限
+    float PID_Vari_Spd_Min;    //变速积分误差下限
 } PID_t;
 
 
@@ -53,7 +57,9 @@ public:
     void PID_Update(PID_t *WhichPID,float NowInput,float Target);
     float PID_PositionPID(PID_t *WhichPID);
     float PID_IncrementPID(PID_t *WhichPID);
-    float Double_Param_PID(PID_t *SpdParam,PID_t *PosParam);
+    float Double_Param_Pos_PID(PID_t *SpdParam,PID_t *PosParam);
+    float Variable_Speed_PID(PID_t *WhichPID);
+    float Double_Param_VSpd_PID(PID_t *SpdParam,PID_t *PosParam);
     PID_t SpdParam;
     PID_t PosParam;
 

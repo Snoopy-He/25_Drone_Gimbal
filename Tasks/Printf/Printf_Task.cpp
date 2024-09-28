@@ -10,6 +10,7 @@ extern Rx_Data FricR_Data;
 extern int16_t can_send[4];
 extern PIDc FricL_PID;
 extern PIDc FricR_PID;
+extern PIDc Yaw_PID;
 extern RC_ctrl_t rc_ctrl;
 extern char RxData1[MESSAGE_LENGTH];
 extern float PID_Data[6];
@@ -30,9 +31,11 @@ void Printf_Task(void const * argument)
         //usart_printf("%f\r\n",RxData1[2]);
         //usart_printf("%f\r\n",((float)RxData1[2]-48) + ((float)RxData1[4]-48)/10 + ((float)RxData1[5]-48)/100);
         //usart_printf("%f\r\n",(float)RxData1[2]-48);
-        //usart_printf("%d\r\n",can_send[2]);
-        usart_printf("%d,%d\r\n",-Rammc_Data.Speed,FricL_Data.Speed);
-
+        //usart_printf("%d\r\n",can_send[3]);
+        //usart_printf("%f\r\n",Yaw_PID.SpdParam.Kp1);
+        //usart_printf("%d,%d\r\n",-Rammc_Data.Speed,FricL_Data.Speed);
+        usart_printf("%f,%d\r\n",YawMotor_Data.Angle-4095.5,-rc_ctrl.rc.ch[2] * 4);
+        //usart_printf("%f,%f\r\n",YawMotor_Data.Angle-4095.5,Yaw_PID.SpdParam.PID_Err_all);
         vTaskDelayUntil(&CurrentTime, 2 / portTICK_RATE_MS);
     }
     /* USER CODE END Printf_Task */

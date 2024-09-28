@@ -15,6 +15,7 @@ extern "C" {
 #include "debug.h"
 
 #define SHOOT_ID   0x200
+#define GIMBAL_ID   0x1FE
 
 
 //右侧开关决定射速，上为关->2，中为一挡射速->3，下为二挡射速->1
@@ -42,6 +43,8 @@ void Shoot_Mode_Command(void);
 void Shoot_Speed_Command(void);
 void Shoot_Command(void);
 void Get_CtrlData(void);
+void Gimbal_Command_Send(void);
+void Shoot_Command_Send(void);
 
 class GimbalC {
 

@@ -15,7 +15,7 @@ extern "C" {
 #include "pid.h"
 #include "debug.h"
 
-#define YAW_MOTOR_ID       0x209
+#define YAW_MOTOR_ID       0x208
 #define PITCH_MOTOR_ID     0x206
 #define L_FRIC_ID          0x202
 #define R_FRIC_ID          0x201
