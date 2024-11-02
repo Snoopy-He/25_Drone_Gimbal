@@ -9,7 +9,7 @@ Rx_Data FricL_Data;
 Rx_Data FricR_Data;
 Rx_Data Rammc_Data;
 Rx_Data YawMotor_Data;
-Rx_Data PitchMotor_Data;
+Rx_DM_Data PitchMotor_Data;
 
 
 void Can_bsp_Init(void)
@@ -18,9 +18,9 @@ void Can_bsp_Init(void)
     HAL_CAN_Start(&hcan1);     //开启can1
     HAL_CAN_ActivateNotification(&hcan1,CAN_IT_RX_FIFO0_MSG_PENDING);  //开启中断
 
-    __HAL_RCC_CAN2_CLK_ENABLE();     //开启can1的时钟
-    HAL_CAN_Start(&hcan2);     //开启can1
-    HAL_CAN_ActivateNotification(&hcan2,CAN_IT_RX_FIFO0_MSG_PENDING);  //开启中断
+    __HAL_RCC_CAN2_CLK_ENABLE();     //开启can2的时钟
+    HAL_CAN_Start(&hcan2);     //开启can2
+    HAL_CAN_ActivateNotification(&hcan2,CAN_IT_RX_FIFO1_MSG_PENDING);  //开启中断
 }
 
 
@@ -43,9 +43,10 @@ void Can_Filter_Init(void)
     HAL_CAN_ActivateNotification(&hcan1, CAN_IT_RX_FIFO0_MSG_PENDING);
 
     can_filter_st.SlaveStartFilterBank = 14;
+    can_filter_st.FilterFIFOAssignment = CAN_RX_FIFO1;
     HAL_CAN_ConfigFilter(&hcan2, &can_filter_st);
     HAL_CAN_Start(&hcan2);
-    HAL_CAN_ActivateNotification(&hcan2, CAN_IT_RX_FIFO0_MSG_PENDING);
+    HAL_CAN_ActivateNotification(&hcan2, CAN_IT_RX_FIFO1_MSG_PENDING);
 }
 
 void Can_Init(void)
@@ -54,8 +55,57 @@ void Can_Init(void)
     Can_Filter_Init();
 }
 
+void DM_Motor_Enable(int16_t ID)
+{
+    uint32_t Send_Mail_Box = 0;
+    CAN_TxHeaderTypeDef Chassis_Tx_Message;
+    uint8_t chassis_can_send_message[8];
 
-void Can_Send(int16_t ID,int16_t Mess_1,int16_t Mess_2,int16_t Mess_3,int16_t Mess_4)
+    Chassis_Tx_Message.DLC = 0x08;
+    Chassis_Tx_Message.IDE = CAN_ID_STD;
+    Chassis_Tx_Message.StdId = ID;
+    Chassis_Tx_Message.RTR = CAN_RTR_DATA;
+
+    chassis_can_send_message[0] = 0xFF;
+    chassis_can_send_message[1] = 0xFF;
+    chassis_can_send_message[2] = 0xFF;
+    chassis_can_send_message[3] = 0xFF;
+    chassis_can_send_message[4] = 0xFF;
+    chassis_can_send_message[5] = 0xFF;
+    chassis_can_send_message[6] = 0xFF;
+    chassis_can_send_message[7] = 0xFC;
+
+    HAL_CAN_AddTxMessage(&hcan1,&Chassis_Tx_Message,chassis_can_send_message,&Send_Mail_Box);
+}
+
+void DM_Motor_Speed_Mode_Send(int16_t ID,float Message)
+{
+    uint32_t Send_Mail_Box = 0;
+    CAN_TxHeaderTypeDef Chassis_Tx_Message;
+    uint8_t chassis_can_send_message[4];
+    uint8_t *vbuf;
+    vbuf = (uint8_t*)&Message;
+
+    Chassis_Tx_Message.DLC = 0x04;
+    Chassis_Tx_Message.IDE = CAN_ID_STD;
+    Chassis_Tx_Message.StdId = ID + 0x200;
+    Chassis_Tx_Message.RTR = CAN_RTR_DATA;
+
+    chassis_can_send_message[0] = *vbuf;
+    chassis_can_send_message[1] = *(vbuf + 1);
+    chassis_can_send_message[2] = *(vbuf + 2);
+    chassis_can_send_message[3] = *(vbuf + 3);
+
+//    chassis_can_send_message[0] = 0X00;
+//    chassis_can_send_message[1] = 0XFF;
+//    chassis_can_send_message[2] = 0X00;
+//    chassis_can_send_message[3] = 0XFF;
+
+
+    HAL_CAN_AddTxMessage(&hcan1,&Chassis_Tx_Message,chassis_can_send_message,&Send_Mail_Box);
+}
+
+void Can1_Send(int16_t ID,int16_t Mess_1,int16_t Mess_2,int16_t Mess_3,int16_t Mess_4)
 {
     uint32_t Send_Mail_Box = 0;
     CAN_TxHeaderTypeDef Chassis_Tx_Message;
@@ -80,13 +130,37 @@ void Can_Send(int16_t ID,int16_t Mess_1,int16_t Mess_2,int16_t Mess_3,int16_t Me
 
 }
 
+void Can2_Send(int16_t ID,int16_t Mess_1,int16_t Mess_2,int16_t Mess_3,int16_t Mess_4)
+{
+    uint32_t Send_Mail_Box = 0;
+    CAN_TxHeaderTypeDef Chassis_Tx_Message;
+    uint8_t chassis_can_send_message[8];
 
-void Can_bsp_IRQHandler(void)
+    Chassis_Tx_Message.DLC = 0x08;
+    Chassis_Tx_Message.IDE = CAN_ID_STD;
+    Chassis_Tx_Message.StdId = ID;
+    Chassis_Tx_Message.RTR = CAN_RTR_DATA;
+
+    chassis_can_send_message[0] = Mess_1 >> 8;
+    chassis_can_send_message[1] = Mess_1;
+    chassis_can_send_message[2] = Mess_2 >> 8;
+    chassis_can_send_message[3] = Mess_2;
+    chassis_can_send_message[4] = Mess_3 >> 8;
+    chassis_can_send_message[5] = Mess_3;
+    chassis_can_send_message[6] = Mess_4 >> 8;
+    chassis_can_send_message[7] = Mess_4;
+
+    HAL_CAN_AddTxMessage(&hcan2,&Chassis_Tx_Message,chassis_can_send_message,&Send_Mail_Box);
+    //HAL_CAN_AddTxMessage(&hcan2,&Chassis_Tx_Message,chassis_can_send_message,&Send_Mail_Box);
+
+}
+
+void Can2_bsp_IRQHandler(void)
 {
     //usart_printf("ok\r\n");
     CAN_RxHeaderTypeDef rx_header;
     uint8_t rx_buf[8];
-    HAL_CAN_GetRxMessage(&hcan1, CAN_RX_FIFO0, &rx_header, rx_buf);
+    HAL_CAN_GetRxMessage(&hcan2, CAN_RX_FIFO0, &rx_header, rx_buf);
     int16_t ID = rx_header.StdId;
     //usart_printf("okok\r\n");
 
@@ -148,10 +222,35 @@ void Can_bsp_IRQHandler(void)
     }
 }
 
+void Can1_bsp_IRQHandler(void)
+{
+    //usart_printf("ok\r\n");
+    CAN_RxHeaderTypeDef rx_header;
+    uint8_t rx_buf[8];
+    HAL_CAN_GetRxMessage(&hcan1, CAN_RX_FIFO0, &rx_header, rx_buf);
+    int16_t ID = rx_header.StdId;
+    //usart_printf("okok\r\n");
+
+    PitchMotor_Data.Angle = ((float)(rx_buf[1] << 8 | rx_buf[2])-32768)/65536 * 360;
+    PitchMotor_Data.Speed = ((float)(rx_buf[3] << 4 | (rx_buf[4] && 0xF0))-2048)/4096 * 60;
+    PitchMotor_Data.Torque = (float)((rx_buf[4] && 0x0F) >> 8 | rx_buf[5]);
+
+}
+
 void HAL_CAN_RxFifo0MsgPendingCallback(CAN_HandleTypeDef *hcan)
 {
     //usart_printf("123\r\n");
-    Can_bsp_IRQHandler();
+    Can1_bsp_IRQHandler();
+    //Can_Send(0X1FE,1000,0,1000,1000);
+    //Can_bsp_IRQHandler();
+    //usart_printf("okok\r\n");
+    //LED_ON();
+}
+
+void HAL_CAN_RxFifo1MsgPendingCallback(CAN_HandleTypeDef *hcan)
+{
+    //usart_printf("123\r\n");
+    Can2_bsp_IRQHandler();
     //Can_Send(0X1FE,1000,0,1000,1000);
     //Can_bsp_IRQHandler();
     //usart_printf("okok\r\n");

@@ -16,6 +16,8 @@ int main(void)
     REMOTEC_Init();
     Can_Init();
     Algorithm_Init();
+    HAL_Delay(1500);    //达妙电机的上电自检，等一下自检
+    Motor_Init();
     Debug_Init();
     os_Init();
     while (1)
