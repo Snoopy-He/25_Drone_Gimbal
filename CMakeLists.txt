@@ -54,8 +54,8 @@ include_directories(User/Framework/Gimbal_BSP/Remote_bsp
                     User/Framework/Gimbal_BSP/Can_bsp
                     User/Framework/RemoteC
                     User/Framework/PID
-                    User/Framework/Gimbal
                     User/Framework/Debug
+                    User/Framework/Gimbal
                     User/MotorC
                     Tasks/Gimbal_Motor
                     Tasks/Printf)

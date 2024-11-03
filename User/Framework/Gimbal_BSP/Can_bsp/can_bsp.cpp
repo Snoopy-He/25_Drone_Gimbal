@@ -14,11 +14,11 @@ Rx_DM_Data PitchMotor_Data;
 
 void Can_bsp_Init(void)
 {
-    __HAL_RCC_CAN1_CLK_ENABLE();     //开启can1的时钟
+    //__HAL_RCC_CAN1_CLK_ENABLE();     //开启can1的时钟
     HAL_CAN_Start(&hcan1);     //开启can1
     HAL_CAN_ActivateNotification(&hcan1,CAN_IT_RX_FIFO0_MSG_PENDING);  //开启中断
 
-    __HAL_RCC_CAN2_CLK_ENABLE();     //开启can2的时钟
+    //__HAL_RCC_CAN2_CLK_ENABLE();     //开启can2的时钟
     HAL_CAN_Start(&hcan2);     //开启can2
     HAL_CAN_ActivateNotification(&hcan2,CAN_IT_RX_FIFO1_MSG_PENDING);  //开启中断
 }
@@ -42,6 +42,7 @@ void Can_Filter_Init(void)
     HAL_CAN_Start(&hcan1);
     HAL_CAN_ActivateNotification(&hcan1, CAN_IT_RX_FIFO0_MSG_PENDING);
 
+    can_filter_st.FilterBank = 14;
     can_filter_st.SlaveStartFilterBank = 14;
     can_filter_st.FilterFIFOAssignment = CAN_RX_FIFO1;
     HAL_CAN_ConfigFilter(&hcan2, &can_filter_st);
@@ -152,7 +153,6 @@ void Can2_Send(int16_t ID,int16_t Mess_1,int16_t Mess_2,int16_t Mess_3,int16_t M
 
     HAL_CAN_AddTxMessage(&hcan2,&Chassis_Tx_Message,chassis_can_send_message,&Send_Mail_Box);
     //HAL_CAN_AddTxMessage(&hcan2,&Chassis_Tx_Message,chassis_can_send_message,&Send_Mail_Box);
-
 }
 
 void Can2_bsp_IRQHandler(void)
@@ -160,7 +160,7 @@ void Can2_bsp_IRQHandler(void)
     //usart_printf("ok\r\n");
     CAN_RxHeaderTypeDef rx_header;
     uint8_t rx_buf[8];
-    HAL_CAN_GetRxMessage(&hcan2, CAN_RX_FIFO0, &rx_header, rx_buf);
+    HAL_CAN_GetRxMessage(&hcan2, CAN_RX_FIFO1, &rx_header, rx_buf);
     int16_t ID = rx_header.StdId;
     //usart_printf("okok\r\n");
 
