@@ -88,7 +88,7 @@ void Shoot_Command_Send(void)
 
 void Yaw_Command_Send(void)
 {
-    Can2_Send(GIMBAL_ID,can2_send[0],can2_send[1],can2_send[2],can2_send[3]);
+    Can2_Send(YAW_ID,can2_send[0],can2_send[1],can2_send[2],can2_send[3]);
 }
 
 void Pitch_Command_Send(void)
@@ -101,10 +101,10 @@ void Gimbal_loop(void)
     Get_CtrlData();
     Algorithm_run();
     //Shoot_Command_Send();
+    //Shoot_Command_Send();
     DM_Motor_Speed_Mode_Send(PITCH_ID,3.1415926 * 2);
     //Can2_Send(SHOOT_ID,1000,1000,0,0);
     //Can1_Send(SHOOT_ID,1000,1000,0,0);
-    Shoot_Command_Send();
     //Yaw_Command_Send();
-
+    Can2_Send(0X1FE,1000,1000,1000,1000);
 }

@@ -15,7 +15,7 @@ extern "C" {
 #include "debug.h"
 
 #define SHOOT_ID   0x200
-#define GIMBAL_ID  0x200
+#define YAW_ID     0x2FF
 #define PITCH_ID   0x000
 
 
