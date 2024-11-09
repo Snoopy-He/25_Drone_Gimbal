@@ -23,9 +23,239 @@ extern Rx_Data YawMotor_Data;
 extern Rx_DM_Data PitchMotor_Data;
 
 int16_t can2_send[4];
-
-
+float Middle_Yaw_Angle;
+float Middel_Pitch_Angle;
+float Algo_Yaw_Data;
+float Algo_Pitch_Data;
 extern RC_ctrl_t rc_ctrl;
+
+void Middle_Angle_Set(float Yaw,float pitch)
+{
+    Middle_Yaw_Angle = Yaw;
+    Middel_Pitch_Angle = pitch;
+}
+
+float Yaw_Angle_limit(float input_data,float Angle_Set,float Angle_now)   //yaw轴限位
+{
+    float result;
+    float reserved_middle_Angle;
+    float Angle_min = Middle_Yaw_Angle - Angle_Set/360 * 8191;
+    float Angle_max = Middle_Yaw_Angle + Angle_Set/360 * 8191;
+    if (Middle_Yaw_Angle > 4095.5)
+    {
+        reserved_middle_Angle = Middle_Yaw_Angle - 4095.5;    //reserved_middle_Angle 和 Middle_Yaw_Angle 处在同一直线上
+    }
+    else
+    {
+        reserved_middle_Angle = 4095.5 + Middle_Yaw_Angle;
+    }
+
+    if (Angle_max > 8191)   //角度上限溢出
+    {
+        Angle_max -= 8191;
+        if ((Angle_min < Angle_now && Angle_now < 8191) || (0 < Angle_now && Angle_now < (Angle_max - 8191)))  //在角度限位中
+        {
+            result = input_data;
+        }
+        else
+        {
+            if ((reserved_middle_Angle < Angle_now && Angle_now < Angle_min) && input_data < 0)    //角度小于下限，且在对称轴偏向Angle_min一侧，且角度值继续减小
+            {
+                result = 0;
+            }
+            else if (Angle_max < Angle_now && Angle_now < reserved_middle_Angle && input_data > 0) //角度大于下限，且在对称轴偏向Angle_max一侧，且角度值继续增大
+            {
+                result = 0;
+            }
+            else
+            {
+                result = input_data;
+            }
+        }
+    }
+    else if (Angle_min < 0)     //角度下限溢出
+    {
+        Angle_min += 8191;
+        if ((0 < Angle_now && Angle_now < Angle_max)||((Angle_min + 8191) < Angle_now && Angle_now < 8191))
+        {
+            result = input_data;
+        }
+        else
+        {
+            if ((reserved_middle_Angle < Angle_now && Angle_now < Angle_min) && input_data < 0)    //角度小于下限，且在对称轴偏向Angle_min一侧，且角度值继续减小
+            {
+                result = 0;
+            }
+            else if (Angle_max < Angle_now && Angle_now < reserved_middle_Angle && input_data > 0) //角度大于下限，且在对称轴偏向Angle_max一侧，且角度值继续增大
+            {
+                result = 0;
+            }
+            else
+            {
+                result = input_data;
+            }
+        }
+    }
+    else
+    {
+        if (Angle_min < Angle_now && Angle_now < Angle_max)
+        {
+            result = input_data;
+        }
+        else
+        {
+            if (Middle_Yaw_Angle > 4095.5)    //在圆弧较大一侧
+            {
+                if (((Angle_max < Angle_now && Angle_now < 8191) || (0 < Angle_now && Angle_now < reserved_middle_Angle)) && input_data > 0)
+                {
+                    result = 0;
+                }
+                else if (reserved_middle_Angle < Angle_now && Angle_now < Angle_min && input_data < 0)
+                {
+                    result = 0;
+                }
+                else
+                {
+                    result = input_data;
+                }
+            }
+            else      //在圆弧较小一侧
+            {
+                if (((0 < Angle_now && Angle_now < Angle_min) ||(reserved_middle_Angle < Angle_now && Angle_now < 8191)) && input_data < 0)
+                {
+                    result = 0;
+                }
+                else if (Angle_max < Angle_now && Angle_now < reserved_middle_Angle && input_data > 0)
+                {
+                    result = 0;
+                }
+                else
+                {
+                    result = input_data;
+                }
+            }
+        }
+    }
+    if (result == 0)    //清零积分项
+    {
+        Yaw_PID.SpdParam.PID_Err_all = 0;
+        Yaw_PID.PosParam.PID_Err_all = 0;
+    }
+    return result;
+}
+
+
+
+float Pitch_Angle_limit(float input_data,float Angle_Set,float Angle_now)   //yaw轴限位
+{
+    float result;
+    float reserved_middle_Angle;
+    float Angle_min = Middle_Yaw_Angle - Angle_Set;
+    float Angle_max = Middle_Yaw_Angle + Angle_Set;
+    Angle_now += 180;
+    Angle_Set += 180;
+    if (Middle_Yaw_Angle > 180)
+    {
+        reserved_middle_Angle = Middle_Yaw_Angle - 180;    //reserved_middle_Angle 和 Middle_Yaw_Angle 处在同一直线上
+    }
+    else
+    {
+        reserved_middle_Angle = 180 + Middle_Yaw_Angle;
+    }
+
+    if (Angle_max > 360)   //角度上限溢出
+    {
+        Angle_max -= 360;
+        if ((Angle_min < Angle_now && Angle_now < 360) || (0 < Angle_now && Angle_now < (Angle_max - 360)))  //在角度限位中
+        {
+            result = input_data;
+        }
+        else
+        {
+            if ((reserved_middle_Angle < Angle_now && Angle_now < Angle_min) && input_data < 0)    //角度小于下限，且在对称轴偏向Angle_min一侧，且角度值继续减小
+            {
+                result = 0;
+            }
+            else if (Angle_max < Angle_now && Angle_now < reserved_middle_Angle && input_data > 0) //角度大于下限，且在对称轴偏向Angle_max一侧，且角度值继续增大
+            {
+                result = 0;
+            }
+            else
+            {
+                result = input_data;
+            }
+        }
+    }
+    else if (Angle_min < 0)     //角度下限溢出
+    {
+        Angle_min += 360;
+        if ((0 < Angle_now && Angle_now < Angle_max)||((Angle_min + 360) < Angle_now && Angle_now < 360))
+        {
+            result = input_data;
+        }
+        else
+        {
+            if ((reserved_middle_Angle < Angle_now && Angle_now < Angle_min) && input_data < 0)    //角度小于下限，且在对称轴偏向Angle_min一侧，且角度值继续减小
+            {
+                result = 0;
+            }
+            else if (Angle_max < Angle_now && Angle_now < reserved_middle_Angle && input_data > 0) //角度大于下限，且在对称轴偏向Angle_max一侧，且角度值继续增大
+            {
+                result = 0;
+            }
+            else
+            {
+                result = input_data;
+            }
+        }
+    }
+    else
+    {
+        if (Angle_min < Angle_now && Angle_now < Angle_max)
+        {
+            result = input_data;
+        }
+        else
+        {
+            if (Middle_Yaw_Angle > 180)    //在圆弧较大一侧
+            {
+                if (((Angle_max < Angle_now && Angle_now < 360) || (0 < Angle_now && Angle_now < reserved_middle_Angle)) && input_data > 0)
+                {
+                    result = 0;
+                }
+                else if (reserved_middle_Angle < Angle_now && Angle_now < Angle_min && input_data < 0)
+                {
+                    result = 0;
+                }
+                else
+                {
+                    result = input_data;
+                }
+            }
+            else      //在圆弧较小一侧
+            {
+                if (((0 < Angle_now && Angle_now < Angle_min) ||(reserved_middle_Angle < Angle_now && Angle_now < 8191)) && input_data < 0)
+                {
+                    result = 0;
+                }
+                else if (Angle_max < Angle_now && Angle_now < reserved_middle_Angle && input_data > 0)
+                {
+                    result = 0;
+                }
+                else
+                {
+                    result = input_data;
+                }
+            }
+        }
+    }
+    if (result == 0)    //清零积分项
+    {
+        Pitch_PID.SpdParam.PID_Err_all = 0;
+        Pitch_PID.PosParam.PID_Err_all = 0;
+    }
+    return result;
+}
 
 void Algorithm_Init(void)
 {
@@ -33,6 +263,7 @@ void Algorithm_Init(void)
     FricR_PID_Init();
     Rammc_PID_Init();
     Yaw_PID_Init();
+    Pitch_PID_Init();
 }
 
 void Motor_Init(void)
@@ -64,21 +295,27 @@ void Get_CtrlData(void)
     Shoot_Command();
 }
 
+
 void Algorithm_run(void)
 {
     //PID_Debug_Set(&FricL_PID.SpdParam,&FricL_PID.PosParam);`
     //PID_Debug_Set(&FricR_PID.SpdParam,&FricR_PID.PosParam);
     //PID_Debug_Set(&Rammc_PID.SpdParam,&Rammc_PID.PosParam);
     //PID_Debug_Set(&Yaw_PID.SpdParam,&Yaw_PID.PosParam);
-    Yaw_PID.PID_Update(&Yaw_PID.SpdParam,((float)YawMotor_Data.Angle)-4095.5,-(int16_t)(rc_ctrl.rc.ch[2] * 4));
+    Yaw_PID.PID_Update(&Yaw_PID.SpdParam,YawMotor_Data.Speed,  (float)rc_ctrl.rc.ch[2] / 100);
+    Pitch_PID.PID_Update(&Pitch_PID.SpdParam,(float)PitchMotor_Data.Speed*30/pi,  (float)rc_ctrl.rc.ch[3] / 50);
     FricL_PID.PID_Update(&FricL_PID.SpdParam,FricL_Data.Speed,(int16_t)(rc_ctrl.rc.ch[0] * 9));
     FricR_PID.PID_Update(&FricR_PID.SpdParam,FricR_Data.Speed,(int16_t)(-(rc_ctrl.rc.ch[0] * 9)));
     //Rammc_PID.PID_Update(&Rammc_PID.SpdParam,Rammc_Data.Speed,(int16_t)(rc_ctrl.rc.ch[2] * 8));
+    Algo_Yaw_Data = Yaw_PID.Double_Param_Pos_PID(&Yaw_PID.SpdParam,&Yaw_PID.PosParam);
+    Algo_Pitch_Data = Pitch_PID.Double_Param_Pos_PID(&Pitch_PID.SpdParam,&Pitch_PID.PosParam);
 
-    can2_send[3] = (int16_t)Yaw_PID.Double_Param_Pos_PID(&Yaw_PID.SpdParam,&Yaw_PID.PosParam);
+    Algo_Yaw_Data = Yaw_Angle_limit(Algo_Yaw_Data,12,YawMotor_Data.Angle);
+
+    can2_send[0] = (int16_t)Algo_Yaw_Data;
     can2_send[2] = (int16_t)Rammc_PID.Double_Param_Pos_PID(&Rammc_PID.SpdParam,&Rammc_PID.PosParam);
-    can2_send[1] = (int16_t)FricL_PID.Double_Param_Pos_PID(&FricL_PID.SpdParam,&FricL_PID.PosParam);
-    can2_send[0] = (int16_t)FricR_PID.Double_Param_Pos_PID(&FricR_PID.SpdParam,&FricR_PID.PosParam);
+    //can2_send[1] = (int16_t)FricL_PID.Double_Param_Pos_PID(&FricL_PID.SpdParam,&FricL_PID.PosParam);
+    //can2_send[0] = (int16_t)FricR_PID.Double_Param_Pos_PID(&FricR_PID.SpdParam,&FricR_PID.PosParam);
 }
 
 void Shoot_Command_Send(void)
@@ -93,7 +330,7 @@ void Yaw_Command_Send(void)
 
 void Pitch_Command_Send(void)
 {
-    //Can1_Send()
+    DM_Motor_Speed_Mode_Send(PITCH_ID,Algo_Pitch_Data);
 }
 
 void Gimbal_loop(void)
@@ -102,9 +339,10 @@ void Gimbal_loop(void)
     Algorithm_run();
     //Shoot_Command_Send();
     //Shoot_Command_Send();
-    DM_Motor_Speed_Mode_Send(PITCH_ID,3.1415926 * 2);
+    //DM_Motor_Speed_Mode_Send(PITCH_ID,3.1415926 * 2);
     //Can2_Send(SHOOT_ID,1000,1000,0,0);
     //Can1_Send(SHOOT_ID,1000,1000,0,0);
-    //Yaw_Command_Send();
-    Can2_Send(0X1FE,1000,1000,1000,1000);
+    Yaw_Command_Send();
+    Pitch_Command_Send();
+    //Can2_Send(0X2FE,1000,1000,1000,1000);
 }

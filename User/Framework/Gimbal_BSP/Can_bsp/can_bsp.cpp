@@ -89,7 +89,7 @@ void DM_Motor_Speed_Mode_Send(int16_t ID,float Message)
 
     Chassis_Tx_Message.DLC = 0x04;
     Chassis_Tx_Message.IDE = CAN_ID_STD;
-    Chassis_Tx_Message.StdId = ID + 0x200;
+    Chassis_Tx_Message.StdId = ID;
     Chassis_Tx_Message.RTR = CAN_RTR_DATA;
 
     chassis_can_send_message[0] = *vbuf;
@@ -163,6 +163,7 @@ void Can2_bsp_IRQHandler(void)
     HAL_CAN_GetRxMessage(&hcan2, CAN_RX_FIFO1, &rx_header, rx_buf);
     int16_t ID = rx_header.StdId;
     //usart_printf("okok\r\n");
+    //usart_printf("%d\r\n",ID);
 
     switch(ID)   //检测不同ID号，适应不同电机的数据
     {
@@ -196,16 +197,6 @@ void Can2_bsp_IRQHandler(void)
             break;
         }
 
-        case PITCH_MOTOR_ID:
-        {
-            PitchMotor_Data.Angle = rx_buf[0] << 8 | rx_buf[1];
-            PitchMotor_Data.Speed = rx_buf[2] << 8 | rx_buf[3];
-            PitchMotor_Data.Torque = rx_buf[4] << 8 | rx_buf[5];
-            PitchMotor_Data.Temperature = rx_buf[6];
-            //usart_printf("%X,%d,%d,%d\r\n", ID,PitchMotor_Data.Angle,PitchMotor_Data.Speed,PitchMotor_Data.Torque,PitchMotor_Data.Temperature);
-            break;
-        }
-
         case YAW_MOTOR_ID:
         {
             YawMotor_Data.Angle = rx_buf[0] << 8 | rx_buf[1];
@@ -235,6 +226,11 @@ void Can1_bsp_IRQHandler(void)
     PitchMotor_Data.Speed = ((float)(rx_buf[3] << 4 | (rx_buf[4] && 0xF0))-2048)/4096 * 60;
     PitchMotor_Data.Torque = (float)((rx_buf[4] && 0x0F) >> 8 | rx_buf[5]);
 
+//    if (-0.015 < PitchMotor_Data.Speed && PitchMotor_Data.Speed < 0.015)    //抑制零漂
+//    {
+//        PitchMotor_Data.Speed = 0.0f;
+//    }
+
 }
 
 void HAL_CAN_RxFifo0MsgPendingCallback(CAN_HandleTypeDef *hcan)
@@ -251,6 +247,7 @@ void HAL_CAN_RxFifo1MsgPendingCallback(CAN_HandleTypeDef *hcan)
 {
     //usart_printf("123\r\n");
     Can2_bsp_IRQHandler();
+    //usart_printf("ok\r\n");
     //Can_Send(0X1FE,1000,0,1000,1000);
     //Can_bsp_IRQHandler();
     //usart_printf("okok\r\n");

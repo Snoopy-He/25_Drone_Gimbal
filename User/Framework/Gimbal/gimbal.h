@@ -15,8 +15,10 @@ extern "C" {
 #include "debug.h"
 
 #define SHOOT_ID   0x200
-#define YAW_ID     0x2FF
-#define PITCH_ID   0x000
+#define YAW_ID     0x2FE
+#define PITCH_ID   0x200
+
+#define pi 3.1415926
 
 
 //右侧开关决定射速，上为关->2，中为一挡射速->3，下为二挡射速->1
@@ -39,6 +41,9 @@ typedef enum
 extern RC_ctrl_t rc_ctrl;
 
 void Gimbal_loop(void);
+void Middle_Angle_Set(float Yaw,float pitch);
+float Yaw_Angle_limit(float input_data,float Angle_Set,float Angle_now);
+float Pitch_Angle_limit(float input_data,float Angle_Set,float Angle_now);
 void Algorithm_Init(void);
 void Motor_Init(void);
 void Shoot_Mode_Command(void);
