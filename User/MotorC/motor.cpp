@@ -10,6 +10,10 @@ PIDc Yaw_PID;
 PIDc Pitch_PID;
 PIDc Rammc_PID;
 
+extern float Algo_Yaw_Data;
+extern float Algo_Pitch_Data;
+extern RC_ctrl_t rc_ctrl;
+
 void FricL_PID_Init(void)
 {
     FricL_PID.PID_Init(&FricL_PID.SpdParam);
@@ -63,7 +67,7 @@ void Pitch_PID_Init(void)
 
     Pitch_PID.SpdParam.Kp1 = 0.1f;
     Pitch_PID.SpdParam.Ki1 = 0.01f;
-    Pitch_PID.SpdParam.Kd1 = 0.0f;
+    Pitch_PID.SpdParam.Kd1 = 0.1f;
     Pitch_PID.SpdParam.PID_ErrAllMax = 80000;
 
     Pitch_PID.PosParam.Kp1 = 1.0f;
@@ -89,5 +93,13 @@ void Yaw_PID_Init(void)
     Yaw_PID.PosParam.Ki1 = 0.0f;
     Yaw_PID.PosParam.Kd1 = 0.1f;
 
+}
+
+void Pitch_DataHandle(void)   //抑制零漂
+{
+    if (rc_ctrl.rc.ch[3] == 0.0f)
+    {
+        Algo_Pitch_Data = 0.0f;
+    }
 }
 

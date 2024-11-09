@@ -18,7 +18,7 @@ void FricR_PID_Init(void);
 void Rammc_PID_Init(void);
 void Pitch_PID_Init(void);
 void Yaw_PID_Init(void);
-
+void Pitch_DataHandle(void);
 
 class MotorC {
 private:

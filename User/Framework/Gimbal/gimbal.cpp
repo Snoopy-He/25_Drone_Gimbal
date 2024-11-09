@@ -303,7 +303,7 @@ void Algorithm_run(void)
     //PID_Debug_Set(&Rammc_PID.SpdParam,&Rammc_PID.PosParam);
     //PID_Debug_Set(&Yaw_PID.SpdParam,&Yaw_PID.PosParam);
     Yaw_PID.PID_Update(&Yaw_PID.SpdParam,YawMotor_Data.Speed,  (float)rc_ctrl.rc.ch[2] / 100);
-    Pitch_PID.PID_Update(&Pitch_PID.SpdParam,(float)PitchMotor_Data.Speed*30/pi,  (float)rc_ctrl.rc.ch[3] / 50);
+    Pitch_PID.PID_Update(&Pitch_PID.SpdParam,(float)PitchMotor_Data.Speed*30/pi,  (float)rc_ctrl.rc.ch[3] / 20 - 1.1);
     FricL_PID.PID_Update(&FricL_PID.SpdParam,FricL_Data.Speed,(int16_t)(rc_ctrl.rc.ch[0] * 9));
     FricR_PID.PID_Update(&FricR_PID.SpdParam,FricR_Data.Speed,(int16_t)(-(rc_ctrl.rc.ch[0] * 9)));
     //Rammc_PID.PID_Update(&Rammc_PID.SpdParam,Rammc_Data.Speed,(int16_t)(rc_ctrl.rc.ch[2] * 8));
@@ -339,7 +339,7 @@ void Gimbal_loop(void)
     Algorithm_run();
     //Shoot_Command_Send();
     //Shoot_Command_Send();
-    //DM_Motor_Speed_Mode_Send(PITCH_ID,3.1415926 * 2);
+    //DM_Motor_Speed_Mode_Send(PITCH_ID,0);
     //Can2_Send(SHOOT_ID,1000,1000,0,0);
     //Can1_Send(SHOOT_ID,1000,1000,0,0);
     Yaw_Command_Send();

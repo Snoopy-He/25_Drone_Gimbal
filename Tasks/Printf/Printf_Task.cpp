@@ -44,7 +44,7 @@ void Printf_Task(void const * argument)
         //usart_printf("%f\r\n",(float)rc_ctrl.rc.ch[2] / 100);
         //usart_printf("%f\r\n",PitchMotor_Data.Angle);
         //usart_printf("%f,%f\r\n",(float)PitchMotor_Data.Speed/3.1415926/2*60,(float)rc_ctrl.rc.ch[3]/100);
-        usart_printf("%f,%f\r\n",(float)PitchMotor_Data.Speed/3.1415926/2*60,PitchMotor_Data.Speed);
+        usart_printf("%f,%f\r\n",(float)rc_ctrl.rc.ch[3] / 20,(float)PitchMotor_Data.Speed*30/3.1415926);
         vTaskDelayUntil(&CurrentTime, 2 / portTICK_RATE_MS);
     }
     /* USER CODE END Printf_Task */
