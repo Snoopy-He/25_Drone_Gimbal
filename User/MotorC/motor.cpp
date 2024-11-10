@@ -95,11 +95,224 @@ void Yaw_PID_Init(void)
 
 }
 
-void Pitch_DataHandle(void)   //抑制零漂
+float GM6020_Angle_limit(float input_data,float Angle_Set,float Middle_Angle,float Angle_now)     //6020电机角度限位
 {
-    if (rc_ctrl.rc.ch[3] == 0.0f)
+    float result;
+    float reserved_middle_Angle;
+    float Angle_min = Middle_Angle - Angle_Set/360 * 8191;
+    float Angle_max = Middle_Angle + Angle_Set/360 * 8191;
+    if (Middle_Angle > 4095.5)
     {
-        Algo_Pitch_Data = 0.0f;
+        reserved_middle_Angle = Middle_Angle - 4095.5;    //reserved_middle_Angle 和 Middle_Yaw_Angle 处在同一直线上
     }
+    else
+    {
+        reserved_middle_Angle = 4095.5 + Middle_Angle;
+    }
+
+    if (Angle_max > 8191)   //角度上限溢出
+    {
+        Angle_max -= 8191;
+        if ((Angle_min < Angle_now && Angle_now < 8191) || (0 < Angle_now && Angle_now < (Angle_max - 8191)))  //在角度限位中
+        {
+            result = input_data;
+        }
+        else
+        {
+            if ((reserved_middle_Angle < Angle_now && Angle_now < Angle_min) && input_data < 0)    //角度小于下限，且在对称轴偏向Angle_min一侧，且角度值继续减小
+            {
+                result = 0;
+            }
+            else if (Angle_max < Angle_now && Angle_now < reserved_middle_Angle && input_data > 0) //角度大于下限，且在对称轴偏向Angle_max一侧，且角度值继续增大
+            {
+                result = 0;
+            }
+            else
+            {
+                result = input_data;
+            }
+        }
+    }
+    else if (Angle_min < 0)     //角度下限溢出
+    {
+        Angle_min += 8191;
+        if ((0 < Angle_now && Angle_now < Angle_max)||((Angle_min + 8191) < Angle_now && Angle_now < 8191))
+        {
+            result = input_data;
+        }
+        else
+        {
+            if ((reserved_middle_Angle < Angle_now && Angle_now < Angle_min) && input_data < 0)    //角度小于下限，且在对称轴偏向Angle_min一侧，且角度值继续减小
+            {
+                result = 0;
+            }
+            else if (Angle_max < Angle_now && Angle_now < reserved_middle_Angle && input_data > 0) //角度大于下限，且在对称轴偏向Angle_max一侧，且角度值继续增大
+            {
+                result = 0;
+            }
+            else
+            {
+                result = input_data;
+            }
+        }
+    }
+    else
+    {
+        if (Angle_min < Angle_now && Angle_now < Angle_max)
+        {
+            result = input_data;
+        }
+        else
+        {
+            if (Middle_Angle > 4095.5)    //在圆弧较大一侧
+            {
+                if (((Angle_max < Angle_now && Angle_now < 8191) || (0 < Angle_now && Angle_now < reserved_middle_Angle)) && input_data > 0)
+                {
+                    result = 0;
+                }
+                else if (reserved_middle_Angle < Angle_now && Angle_now < Angle_min && input_data < 0)
+                {
+                    result = 0;
+                }
+                else
+                {
+                    result = input_data;
+                }
+            }
+            else      //在圆弧较小一侧
+            {
+                if (((0 < Angle_now && Angle_now < Angle_min) ||(reserved_middle_Angle < Angle_now && Angle_now < 8191)) && input_data < 0)
+                {
+                    result = 0;
+                }
+                else if (Angle_max < Angle_now && Angle_now < reserved_middle_Angle && input_data > 0)
+                {
+                    result = 0;
+                }
+                else
+                {
+                    result = input_data;
+                }
+            }
+        }
+    }
+    if (result == 0)    //清零积分项
+    {
+        Yaw_PID.SpdParam.PID_Err_all = 0;
+        Yaw_PID.PosParam.PID_Err_all = 0;
+    }
+    return result;
 }
+
+float DM4310_Angle_limit(float input_data,float Angle_Set,float Middle_Angle,float Angle_now)     //6020电机角度限位
+{
+    float result;
+    float reserved_middle_Angle;
+    float Angle_min = Middle_Angle - Angle_Set;
+    float Angle_max = Middle_Angle + Angle_Set;
+    Angle_now += 180;
+    if (Middle_Angle > 180)
+    {
+        reserved_middle_Angle = Middle_Angle - 180;    //reserved_middle_Angle 和 Middle_Yaw_Angle 处在同一直线上
+    }
+    else
+    {
+        reserved_middle_Angle = 180 + Middle_Angle;
+    }
+
+    if (Angle_max > 360)   //角度上限溢出
+    {
+        Angle_max -= 360;
+        if ((Angle_min < Angle_now && Angle_now < 360) || (0 < Angle_now && Angle_now < (Angle_max - 360)))  //在角度限位中
+        {
+            result = input_data;
+        }
+        else
+        {
+            if ((reserved_middle_Angle < Angle_now && Angle_now < Angle_min) && input_data < 0)    //角度小于下限，且在对称轴偏向Angle_min一侧，且角度值继续减小
+            {
+                result = 0;
+            }
+            else if (Angle_max < Angle_now && Angle_now < reserved_middle_Angle && input_data > 0) //角度大于下限，且在对称轴偏向Angle_max一侧，且角度值继续增大
+            {
+                result = 0;
+            }
+            else
+            {
+                result = input_data;
+            }
+        }
+    }
+    else if (Angle_min < 0)     //角度下限溢出
+    {
+        Angle_min += 360;
+        if ((0 < Angle_now && Angle_now < Angle_max)||((Angle_min + 360) < Angle_now && Angle_now < 360))
+        {
+            result = input_data;
+        }
+        else
+        {
+            if ((reserved_middle_Angle < Angle_now && Angle_now < Angle_min) && input_data < 0)    //角度小于下限，且在对称轴偏向Angle_min一侧，且角度值继续减小
+            {
+                result = 0;
+            }
+            else if (Angle_max < Angle_now && Angle_now < reserved_middle_Angle && input_data > 0) //角度大于下限，且在对称轴偏向Angle_max一侧，且角度值继续增大
+            {
+                result = 0;
+            }
+            else
+            {
+                result = input_data;
+            }
+        }
+    }
+    else
+    {
+        if (Angle_min < Angle_now && Angle_now < Angle_max)
+        {
+            result = input_data;
+        }
+        else
+        {
+            if (Middle_Angle > 180)    //在圆弧较大一侧
+            {
+                if (((Angle_max < Angle_now && Angle_now < 360) || (0 < Angle_now && Angle_now < reserved_middle_Angle)) && input_data > 0)
+                {
+                    result = 0;
+                }
+                else if (reserved_middle_Angle < Angle_now && Angle_now < Angle_min && input_data < 0)
+                {
+                    result = 0;
+                }
+                else
+                {
+                    result = input_data;
+                }
+            }
+            else      //在圆弧较小一侧
+            {
+                if (((0 < Angle_now && Angle_now < Angle_min) ||(reserved_middle_Angle < Angle_now && Angle_now < 8191)) && input_data < 0)
+                {
+                    result = 0;
+                }
+                else if (Angle_max < Angle_now && Angle_now < reserved_middle_Angle && input_data > 0)
+                {
+                    result = 0;
+                }
+                else
+                {
+                    result = input_data;
+                }
+            }
+        }
+    }
+    if (result == 0)    //清零积分项
+    {
+        Pitch_PID.SpdParam.PID_Err_all = 0;
+        Pitch_PID.PosParam.PID_Err_all = 0;
+    }
+    return result;
+}
+
+
 

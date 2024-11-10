@@ -18,7 +18,8 @@ void FricR_PID_Init(void);
 void Rammc_PID_Init(void);
 void Pitch_PID_Init(void);
 void Yaw_PID_Init(void);
-void Pitch_DataHandle(void);
+float GM6020_Angle_limit(float input_data,float Angle_Set,float Middle_Angle,float Angle_now);
+float DM4310_Angle_limit(float input_data,float Angle_Set,float Middle_Angle,float Angle_now);
 
 class MotorC {
 private:

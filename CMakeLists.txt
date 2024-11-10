@@ -53,6 +53,7 @@ include_directories(Core/Inc Drivers/STM32F4xx_HAL_Driver/Inc Drivers/STM32F4xx_
 include_directories(User/Framework/Gimbal_BSP/Remote_bsp
                     User/Framework/Gimbal_BSP/Can_bsp
                     User/Framework/Gimbal_BSP/IMU_bsp/BMI088
+                    User/Framework/Gimbal_BSP/IMU_bsp
                     User/Framework/RemoteC
                     User/Framework/PID
                     User/Framework/Debug
@@ -81,6 +82,11 @@ add_executable(${PROJECT_NAME}.elf ${SOURCES} ${LINKER_SCRIPT}
               User/Framework/Gimbal_BSP/IMU_bsp/BMI088/BMI088_bsp.cpp
               User/Framework/Gimbal_BSP/IMU_bsp/BMI088/BMI088_bsp.h
               User/Framework/Gimbal_BSP/IMU_bsp/BMI088/BMI088_reg_bsp.h
+              User/Framework/Gimbal_BSP/IMU_bsp/BMI088/BMI088_Middleware.cpp
+              User/Framework/Gimbal_BSP/IMU_bsp/BMI088/BMI088_Middleware.h
+              User/Framework/Gimbal_BSP/IMU_bsp/BMI088/struct_typedef.h
+              User/Framework/Gimbal_BSP/IMU_bsp/imu_bsp_delay.cpp
+              User/Framework/Gimbal_BSP/IMU_bsp/imu_bsp_delay.h
               User/Framework/RemoteC/remotec.cpp
               User/Framework/RemoteC/remotec.h
               User/Framework/PID/pid.cpp
@@ -94,7 +100,7 @@ add_executable(${PROJECT_NAME}.elf ${SOURCES} ${LINKER_SCRIPT}
               Tasks/Gimbal_Motor/Gimbal_Motor_Task.cpp
               Tasks/Gimbal_Motor/Gimbal_Motor_Task.h
               Tasks/Printf/Printf_Task.cpp
-              Tasks/Printf/Printf_Task.h User/Framework/Gimbal_BSP/IMU_bsp/BMI088/BMI088_reg_bsp.h)
+              Tasks/Printf/Printf_Task.h)
 
 set(HEX_FILE ${PROJECT_BINARY_DIR}/${PROJECT_NAME}.hex)
 set(BIN_FILE ${PROJECT_BINARY_DIR}/${PROJECT_NAME}.bin)
