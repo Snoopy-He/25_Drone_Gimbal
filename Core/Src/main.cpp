@@ -19,7 +19,7 @@ int main(void)
     HAL_Delay(1500);    //达妙电机的上电自检，等一下自检
     Motor_Init();
     Debug_Init();
-    Middle_Angle_Set(8135,0.0f);
+    Middle_Angle_Set(8135,120.0f);
     os_Init();
     while (1)
     {

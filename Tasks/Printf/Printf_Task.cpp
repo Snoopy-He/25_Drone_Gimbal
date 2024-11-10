@@ -42,9 +42,9 @@ void Printf_Task(void const * argument)
         //usart_printf("%f,%f\r\n",YawMotor_Data.Angle-4095.5,Yaw_PID.SpdParam.PID_Err_all);
         //usart_printf("%f,%f,%f\r\n",PitchMotor_Data.Speed,PitchMotor_Data.Angle,PitchMotor_Data.Torque);
         //usart_printf("%f\r\n",(float)rc_ctrl.rc.ch[2] / 100);
-        //usart_printf("%f\r\n",PitchMotor_Data.Angle);
+        usart_printf("%f,%f\r\n",PitchMotor_Data.Angle + 180,Algo_Pitch_Data);
         //usart_printf("%f,%f\r\n",(float)PitchMotor_Data.Speed/3.1415926/2*60,(float)rc_ctrl.rc.ch[3]/100);
-        usart_printf("%f,%f\r\n",(float)rc_ctrl.rc.ch[3] / 20,(float)PitchMotor_Data.Speed*30/3.1415926);
+        //usart_printf("%f,%f\r\n",(float)rc_ctrl.rc.ch[3] / 20,(float)PitchMotor_Data.Speed*30/3.1415926);
         vTaskDelayUntil(&CurrentTime, 2 / portTICK_RATE_MS);
     }
     /* USER CODE END Printf_Task */

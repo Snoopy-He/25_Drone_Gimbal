@@ -24,7 +24,7 @@ extern Rx_DM_Data PitchMotor_Data;
 
 int16_t can2_send[4];
 float Middle_Yaw_Angle;
-float Middel_Pitch_Angle;
+float Middle_Pitch_Angle;
 float Algo_Yaw_Data;
 float Algo_Pitch_Data;
 extern RC_ctrl_t rc_ctrl;
@@ -32,7 +32,9 @@ extern RC_ctrl_t rc_ctrl;
 void Middle_Angle_Set(float Yaw,float pitch)
 {
     Middle_Yaw_Angle = Yaw;
-    Middel_Pitch_Angle = pitch;
+    Middle_Pitch_Angle = pitch;
+    //Yaw_PID.PID_Update(&Yaw_PID.SpdParam,YawMotor_Data.Angle,  Yaw);
+
 }
 
 float Yaw_Angle_limit(float input_data,float Angle_Set,float Angle_now)   //yaw轴限位
@@ -146,21 +148,21 @@ float Yaw_Angle_limit(float input_data,float Angle_Set,float Angle_now)   //yaw�
 
 
 
-float Pitch_Angle_limit(float input_data,float Angle_Set,float Angle_now)   //yaw轴限位
+float Pitch_Angle_limit(float input_data,float Angle_Set,float Angle_now)   //pitch轴限位
 {
     float result;
     float reserved_middle_Angle;
-    float Angle_min = Middle_Yaw_Angle - Angle_Set;
-    float Angle_max = Middle_Yaw_Angle + Angle_Set;
+    Middle_Pitch_Angle = Middle_Pitch_Angle + 180;
+    float Angle_min = Middle_Pitch_Angle - Angle_Set;
+    float Angle_max = Middle_Pitch_Angle + Angle_Set;
     Angle_now += 180;
-    Angle_Set += 180;
-    if (Middle_Yaw_Angle > 180)
+    if (Middle_Pitch_Angle > 180)
     {
-        reserved_middle_Angle = Middle_Yaw_Angle - 180;    //reserved_middle_Angle 和 Middle_Yaw_Angle 处在同一直线上
+        reserved_middle_Angle = Middle_Pitch_Angle - 180;    //reserved_middle_Angle 和 Middle_Yaw_Angle 处在同一直线上
     }
     else
     {
-        reserved_middle_Angle = 180 + Middle_Yaw_Angle;
+        reserved_middle_Angle = 180 + Middle_Pitch_Angle;
     }
 
     if (Angle_max > 360)   //角度上限溢出
@@ -217,7 +219,7 @@ float Pitch_Angle_limit(float input_data,float Angle_Set,float Angle_now)   //ya
         }
         else
         {
-            if (Middle_Yaw_Angle > 180)    //在圆弧较大一侧
+            if (Middle_Pitch_Angle > 180)    //在圆弧较大一侧
             {
                 if (((Angle_max < Angle_now && Angle_now < 360) || (0 < Angle_now && Angle_now < reserved_middle_Angle)) && input_data > 0)
                 {
@@ -302,8 +304,8 @@ void Algorithm_run(void)
     //PID_Debug_Set(&FricR_PID.SpdParam,&FricR_PID.PosParam);
     //PID_Debug_Set(&Rammc_PID.SpdParam,&Rammc_PID.PosParam);
     //PID_Debug_Set(&Yaw_PID.SpdParam,&Yaw_PID.PosParam);
-    Yaw_PID.PID_Update(&Yaw_PID.SpdParam,YawMotor_Data.Speed,  (float)rc_ctrl.rc.ch[2] / 100);
-    Pitch_PID.PID_Update(&Pitch_PID.SpdParam,(float)PitchMotor_Data.Speed*30/pi,  (float)rc_ctrl.rc.ch[3] / 20 - 1.1);
+    Yaw_PID.PID_Update(&Yaw_PID.SpdParam,YawMotor_Data.Speed,  (float)rc_ctrl.rc.ch[2] / 60);
+    Pitch_PID.PID_Update(&Pitch_PID.SpdParam,(float)PitchMotor_Data.Speed*30/pi,  (float)rc_ctrl.rc.ch[3] / 20 -1.17);
     FricL_PID.PID_Update(&FricL_PID.SpdParam,FricL_Data.Speed,(int16_t)(rc_ctrl.rc.ch[0] * 9));
     FricR_PID.PID_Update(&FricR_PID.SpdParam,FricR_Data.Speed,(int16_t)(-(rc_ctrl.rc.ch[0] * 9)));
     //Rammc_PID.PID_Update(&Rammc_PID.SpdParam,Rammc_Data.Speed,(int16_t)(rc_ctrl.rc.ch[2] * 8));
@@ -311,6 +313,7 @@ void Algorithm_run(void)
     Algo_Pitch_Data = Pitch_PID.Double_Param_Pos_PID(&Pitch_PID.SpdParam,&Pitch_PID.PosParam);
 
     Algo_Yaw_Data = Yaw_Angle_limit(Algo_Yaw_Data,12,YawMotor_Data.Angle);
+    Algo_Pitch_Data = Pitch_Angle_limit(Algo_Pitch_Data,30,PitchMotor_Data.Angle);
 
     can2_send[0] = (int16_t)Algo_Yaw_Data;
     can2_send[2] = (int16_t)Rammc_PID.Double_Param_Pos_PID(&Rammc_PID.SpdParam,&Rammc_PID.PosParam);
