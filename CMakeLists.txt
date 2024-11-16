@@ -15,6 +15,7 @@ set(CMAKE_TRY_COMPILE_TARGET_TYPE STATIC_LIBRARY)
 
 # project settings
 project(2024_Gimbal C CXX ASM)
+project(Snoopy_Drone_Gimbal C CXX ASM)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_C_STANDARD 11)
 
@@ -50,22 +51,42 @@ else ()
 endif ()
 
 include_directories(Core/Inc Drivers/STM32F4xx_HAL_Driver/Inc Drivers/STM32F4xx_HAL_Driver/Inc/Legacy Drivers/CMSIS/Device/ST/STM32F4xx/Include Drivers/CMSIS/Include Middlewares/Third_Party/FreeRTOS/Source/include Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM4F)
-include_directories(User/Framework/Gimbal_BSP/Remote_bsp
+include_directories(Middlewares/ST/ARM/DSP/lnc
+                    Middlewares/ST/ARM/DSP/Lib
+                    User/Framework/Gimbal_BSP/Remote_bsp
                     User/Framework/Gimbal_BSP/Can_bsp
-                    User/Framework/Gimbal_BSP/IMU_bsp/BMI088
-                    User/Framework/Gimbal_BSP/IMU_bsp
                     User/Framework/RemoteC
                     User/Framework/PID
                     User/Framework/Debug
                     User/Framework/Gimbal
+                    User/Framework/IMU
+                    User/Framework/IMU/algorithm
+                    User/Framework/IMU/algorithm/include
+                    User/Framework/IMU/bsp
+                    User/Framework/IMU/controller
+                    User/Framework/IMU/devices
+                    User/Framework/IMU/Other
+                    User/Framework/IMU/task
+                    User/Framework/IMU
                     User/MotorC
                     Tasks/Gimbal_Motor
                     Tasks/Printf)
 
 
 add_definitions(-DDEBUG -DUSE_HAL_DRIVER -DSTM32F407xx)
+add_definitions(
+            -DDEBUG
+            -DUSE_HAL_DRIVER
+            -DSTM32F407xx
 
-file(GLOB_RECURSE SOURCES "Core/*.*" "Middlewares/*.*" "Drivers/*.*")
+            -DARM_MATH_CM4
+            -D__FPU_USED=1U
+            -D__FPU_PRESENT=1U
+            -DARM_MATH_MATRIX_CHECK
+            -DARM_MATH_ROUNDING
+)
+
+file(GLOB_RECURSE SOURCES "Core/*.*" "Middlewares/*.*" "Drivers/*.*" "Users/*.*")
 
 set(LINKER_SCRIPT ${CMAKE_SOURCE_DIR}/STM32F407IGHX_FLASH.ld)
 
@@ -79,14 +100,13 @@ add_executable(${PROJECT_NAME}.elf ${SOURCES} ${LINKER_SCRIPT}
               User/Framework/Gimbal_BSP/Remote_bsp/remote_bsp.h
               User/Framework/Gimbal_BSP/Can_bsp/can_bsp.cpp
               User/Framework/Gimbal_BSP/Can_bsp/can_bsp.h
-              User/Framework/Gimbal_BSP/IMU_bsp/BMI088/BMI088_bsp.cpp
-              User/Framework/Gimbal_BSP/IMU_bsp/BMI088/BMI088_bsp.h
-              User/Framework/Gimbal_BSP/IMU_bsp/BMI088/BMI088_reg_bsp.h
-              User/Framework/Gimbal_BSP/IMU_bsp/BMI088/BMI088_Middleware.cpp
-              User/Framework/Gimbal_BSP/IMU_bsp/BMI088/BMI088_Middleware.h
-              User/Framework/Gimbal_BSP/IMU_bsp/BMI088/struct_typedef.h
-              User/Framework/Gimbal_BSP/IMU_bsp/imu_bsp_delay.cpp
-              User/Framework/Gimbal_BSP/IMU_bsp/imu_bsp_delay.h
+              User/Framework/IMU
+              User/Framework/IMU/algorithm
+              User/Framework/IMU/algorithm/Include
+              User/Framework/IMU/bsp
+              User/Framework/IMU/controller
+              User/Framework/IMU/devices
+              User/Framework/IMU/task
               User/Framework/RemoteC/remotec.cpp
               User/Framework/RemoteC/remotec.h
               User/Framework/PID/pid.cpp
@@ -101,6 +121,8 @@ add_executable(${PROJECT_NAME}.elf ${SOURCES} ${LINKER_SCRIPT}
               Tasks/Gimbal_Motor/Gimbal_Motor_Task.h
               Tasks/Printf/Printf_Task.cpp
               Tasks/Printf/Printf_Task.h)
+
+target_link_libraries(${PROJECT_NAME}.elf ${PROJECT_SOURCE_DIR}/User/Framework/IMU/algorithm/AHRS.lib)
 
 set(HEX_FILE ${PROJECT_BINARY_DIR}/${PROJECT_NAME}.hex)
 set(BIN_FILE ${PROJECT_BINARY_DIR}/${PROJECT_NAME}.bin)

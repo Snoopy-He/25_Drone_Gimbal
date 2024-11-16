@@ -50,8 +50,8 @@ void Rammc_PID_Init(void)
     Rammc_PID.PID_Init(&Rammc_PID.SpdParam);
     Rammc_PID.PID_Init(&Rammc_PID.PosParam);
 
-    Rammc_PID.SpdParam.Kp1 = 2.0f;
-    Rammc_PID.SpdParam.Ki1 = 0.1f;
+    Rammc_PID.SpdParam.Kp1 = 1.8f;
+    Rammc_PID.SpdParam.Ki1 = 0.04f;
     Rammc_PID.SpdParam.Kd1 = 5.0f;
 
     Rammc_PID.PosParam.Kp1 = 2.0f;

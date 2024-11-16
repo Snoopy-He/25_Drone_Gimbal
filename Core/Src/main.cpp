@@ -6,8 +6,8 @@
 #include "can_bsp.h"
 #include "gimbal.h"
 #include "debug.h"
-
-
+#include "BMI088driver.h"
+#include "ist8310driver.h"
 
 
 int main(void)
@@ -20,6 +20,14 @@ int main(void)
     Motor_Init();
     Debug_Init();
     Middle_Angle_Set(8135.0f,140.0f);
+    while (BMI088_init())
+    {
+        HAL_Delay(100);
+    }
+    while (ist8310_init())
+    {
+        HAL_Delay(100);
+    }
     os_Init();
     while (1)
     {

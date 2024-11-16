@@ -21,7 +21,9 @@
 #include "cmsis_os.h"
 #include "can.h"
 #include "dma.h"
+#include "i2c.h"
 #include "spi.h"
+#include "tim.h"
 #include "usart.h"
 #include "gpio.h"
 
@@ -71,6 +73,7 @@ void main_Init(void)
     MX_CAN1_Init();
     MX_CAN2_Init();
     MX_SPI1_Init();
+    MX_TIM10_Init();
 }
 
 void os_Init(void)
