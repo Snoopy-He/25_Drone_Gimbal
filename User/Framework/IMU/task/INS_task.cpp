@@ -599,7 +599,7 @@ void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
     {
         mag_update_flag |= 1 << IMU_DR_SHFITS;
         /**
-         * 开启磁力计 TODO
+         * 开启磁力计
          */
 //        if (mag_update_flag &= 1 << IMU_DR_SHFITS)
 //        {
