@@ -38,7 +38,8 @@ extern "C"
 
 #include "imu_tool.h"
 #include "INS_task.h"
-#include "DebugC.h"
+#include "debug.h"
+
 
 ComplementaryFilterROS imu_tool;
 Imu_Msg imumsg;

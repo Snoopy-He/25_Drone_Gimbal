@@ -29,6 +29,9 @@ extern "C" {
 #include <stdint.h>
 #include "struct_typedef.h"
 #include "BMI088driver.h"
+#include "BMI088Middleware.h"
+#include "ist8310driver_middleware.h"
+#include "pid_temp.h"
 
 
 #define SPI_DMA_GYRO_LENGHT       8

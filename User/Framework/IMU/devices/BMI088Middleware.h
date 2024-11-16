@@ -11,6 +11,12 @@
 #define CS1_GYRO_GPIO_Port  GPIOB
 #define CS1_ACCEL_Pin       GPIO_PIN_4
 #define CS1_GYRO_Pin        GPIO_PIN_0
+#define INT1_ACCEL_Pin GPIO_PIN_4
+#define INT1_ACCEL_GPIO_Port GPIOC
+#define INT1_ACCEL_EXTI_IRQn EXTI4_IRQn
+#define INT1_GYRO_Pin GPIO_PIN_5
+#define INT1_GYRO_GPIO_Port GPIOC
+#define INT1_GYRO_EXTI_IRQn EXTI9_5_IRQn
 
 extern void BMI088_GPIO_init(void);
 extern void BMI088_com_init(void);

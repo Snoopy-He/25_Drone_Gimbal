@@ -27,6 +27,9 @@
 
 #define RSTN_IST8310_GPIO_Port GPIOG
 #define RSTN_IST8310_Pin GPIO_PIN_6
+#define DRDY_IST8310_Pin GPIO_PIN_3
+#define DRDY_IST8310_GPIO_Port GPIOG
+#define DRDY_IST8310_EXTI_IRQn EXTI3_IRQn
 
 extern void ist8310_GPIO_init(void); //ist8310的io初始化
 extern void ist8310_com_init(void);  //ist8310的通讯初始化
