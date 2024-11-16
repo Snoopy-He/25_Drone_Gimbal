@@ -29,6 +29,7 @@ int main(void)
         HAL_Delay(100);
     }
     os_Init();
+
     while (1)
     {
     }
