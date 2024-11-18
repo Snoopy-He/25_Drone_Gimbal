@@ -18,7 +18,7 @@
 #define PID_H
 
 #include <stdint.h>
-#include "../task/struct_typedef.h"
+#include "struct_typedef.h"
 enum PID_MODE
 {
     PID_POSITION = 0,

@@ -5,6 +5,7 @@
 #include "Printf_Task.h"
 #include "remote_bsp.h"
 
+
 extern Rx_Data FricL_Data;
 extern Rx_Data FricR_Data;
 extern Rx_Data YawMotor_Data;
@@ -18,6 +19,7 @@ extern char RxData1[MESSAGE_LENGTH];
 extern float PID_Data[6];
 extern float Algo_Yaw_Data;
 extern float Algo_Pitch_Data;
+extern Imu_Message IMU_Data;
 
 void Printf_Task(void const * argument)
 {
@@ -38,13 +40,14 @@ void Printf_Task(void const * argument)
         //usart_printf("%d\r\n",can2_send[0]);
         //usart_printf("%f\r\n",Yaw_PID.SpdParam.Kp1);
         //usart_printf("%d,%d\r\n",Rammc_Data.Speed,rc_ctrl.rc.ch[0] * 8);
-        usart_printf("%d,%d,%f\r\n",YawMotor_Data.Angle,YawMotor_Data.Speed,(float)rc_ctrl.rc.ch[2]/100);
+        //usart_printf("%d,%d,%f\r\n",YawMotor_Data.Angle,YawMotor_Data.Speed,(float)rc_ctrl.rc.ch[2]/100);
         //usart_printf("%f,%f\r\n",YawMotor_Data.Angle-4095.5,Yaw_PID.SpdParam.PID_Err_all);
         //usart_printf("%f,%f,%f\r\n",PitchMotor_Data.Speed,PitchMotor_Data.Angle,PitchMotor_Data.Torque);
         //usart_printf("%f\r\n",(float)rc_ctrl.rc.ch[2] / 100);
         //usart_printf("%f,%f\r\n",PitchMotor_Data.Angle + 180,Algo_Pitch_Data);
         //usart_printf("%f,%f\r\n",(float)PitchMotor_Data.Speed/3.1415926/2*60,(float)rc_ctrl.rc.ch[3]/100);
         //usart_printf("%f,%f\r\n",(float)rc_ctrl.rc.ch[3] / 20,(float)PitchMotor_Data.Speed*30/3.1415926);
+        //usart_printf("%f\r\n",IMU_Data.temperature);
         vTaskDelayUntil(&CurrentTime, 2 / portTICK_RATE_MS);
     }
     /* USER CODE END Printf_Task */

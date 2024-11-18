@@ -5,14 +5,17 @@
 #ifndef INC_2024_GIMBAL_PRINTF_TASK_H
 #define INC_2024_GIMBAL_PRINTF_TASK_H
 
+
 #ifdef __cplusplus
 extern "C" {
 #endif
 
+#include "IMU.h"
 #include "FreeRTOS.h"
 #include "task.h"
 #include "can_bsp.h"
 #include "debug.h"
+#include "INS_task.h"
 
 void Printf_Task(void const * argument);
 

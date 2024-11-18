@@ -96,21 +96,25 @@ uint8_t BMI088_init(void)
     if (bmi088_accel_self_test() != BMI088_NO_ERROR)
     {
         error |= BMI088_SELF_TEST_ACCEL_ERROR;
+        usart_printf("accel_error\r\n");
     }
     else
     {
         error |= bmi088_accel_init();
+        usart_printf("accel_ok\r\n");
     }
 
     if (bmi088_gyro_self_test() != BMI088_NO_ERROR)
     {
         error |= BMI088_SELF_TEST_GYRO_ERROR;
+        usart_printf("gyro_error\r\n");
     }
     else
     {
         error |= bmi088_gyro_init();
+        usart_printf("gyro_ok\r\n");
     }
-
+    usart_printf("%d\r\n",error);
     return error;
 }
 
@@ -138,6 +142,7 @@ bool_t bmi088_accel_init(void)
     // check the "who am I"
     if (res != BMI088_ACC_CHIP_ID_VALUE)
     {
+        usart_printf("error7\r\n");
         return BMI088_NO_SENSOR;
     }
 
@@ -146,13 +151,14 @@ bool_t bmi088_accel_init(void)
     {
 
         BMI088_accel_write_single_reg(write_BMI088_accel_reg_data_error[write_reg_num][0], write_BMI088_accel_reg_data_error[write_reg_num][1]);
-        BMI088_delay_us(BMI088_COM_WAIT_SENSOR_TIME);
+        BMI088_delay_ms(BMI088_COM_WAIT_SENSOR_TIME);
 
         BMI088_accel_read_single_reg(write_BMI088_accel_reg_data_error[write_reg_num][0], res);
-        BMI088_delay_us(BMI088_COM_WAIT_SENSOR_TIME);
+        BMI088_delay_ms(BMI088_COM_WAIT_SENSOR_TIME);
 
         if (res != write_BMI088_accel_reg_data_error[write_reg_num][1])
         {
+            usart_printf("error8\r\n");
             return write_BMI088_accel_reg_data_error[write_reg_num][2];
         }
     }
@@ -175,13 +181,14 @@ bool_t bmi088_gyro_init(void)
     BMI088_delay_ms(BMI088_LONG_DELAY_TIME);
     //check commiunication is normal after reset
     BMI088_gyro_read_single_reg(BMI088_GYRO_CHIP_ID, res);
-    BMI088_delay_us(BMI088_COM_WAIT_SENSOR_TIME);
+    BMI088_delay_ms(BMI088_COM_WAIT_SENSOR_TIME);
     BMI088_gyro_read_single_reg(BMI088_GYRO_CHIP_ID, res);
-    BMI088_delay_us(BMI088_COM_WAIT_SENSOR_TIME);
+    BMI088_delay_ms(BMI088_COM_WAIT_SENSOR_TIME);
 
     // check the "who am I"
     if (res != BMI088_GYRO_CHIP_ID_VALUE)
     {
+        usart_printf("error5\r\n");
         return BMI088_NO_SENSOR;
     }
 
@@ -190,13 +197,14 @@ bool_t bmi088_gyro_init(void)
     {
 
         BMI088_gyro_write_single_reg(write_BMI088_gyro_reg_data_error[write_reg_num][0], write_BMI088_gyro_reg_data_error[write_reg_num][1]);
-        BMI088_delay_us(BMI088_COM_WAIT_SENSOR_TIME);
+        BMI088_delay_ms(BMI088_COM_WAIT_SENSOR_TIME);
 
         BMI088_gyro_read_single_reg(write_BMI088_gyro_reg_data_error[write_reg_num][0], res);
-        BMI088_delay_us(BMI088_COM_WAIT_SENSOR_TIME);
+        BMI088_delay_ms(BMI088_COM_WAIT_SENSOR_TIME);
 
         if (res != write_BMI088_gyro_reg_data_error[write_reg_num][1])
         {
+            usart_printf("error6\r\n");
             return write_BMI088_gyro_reg_data_error[write_reg_num][2];
         }
     }
@@ -227,8 +235,10 @@ bool_t bmi088_accel_self_test(void)
 
     //check commiunication is normal
     BMI088_accel_read_single_reg(BMI088_ACC_CHIP_ID, res);
+    //usart_printf("%d\r\n",res);
     BMI088_delay_us(BMI088_COM_WAIT_SENSOR_TIME);
     BMI088_accel_read_single_reg(BMI088_ACC_CHIP_ID, res);
+    //usart_printf("%d\r\n",res);
     BMI088_delay_us(BMI088_COM_WAIT_SENSOR_TIME);
 
     // reset  bmi088 accel sensor and wait for > 50ms
@@ -237,45 +247,57 @@ bool_t bmi088_accel_self_test(void)
 
     //check commiunication is normal
     BMI088_accel_read_single_reg(BMI088_ACC_CHIP_ID, res);
-    BMI088_delay_us(BMI088_COM_WAIT_SENSOR_TIME);
+    //usart_printf("%d\r\n",res);
+    BMI088_delay_ms(BMI088_COM_WAIT_SENSOR_TIME);
     BMI088_accel_read_single_reg(BMI088_ACC_CHIP_ID, res);
-    BMI088_delay_us(BMI088_COM_WAIT_SENSOR_TIME);
+    //usart_printf("%d\r\n",res);
+    BMI088_delay_ms(BMI088_COM_WAIT_SENSOR_TIME);
 
     if (res != BMI088_ACC_CHIP_ID_VALUE)
     {
+        usart_printf("Error1\r\n");
         return BMI088_NO_SENSOR;
     }
 
     // set the accel register
-    for (write_reg_num = 0; write_reg_num < 4; write_reg_num++)
+    for (write_reg_num = 0; write_reg_num < 4; write_reg_num ++)
     {
+        //usart_printf("%d\r\n",write_reg_num);
 
         BMI088_accel_write_single_reg(write_BMI088_ACCEL_self_test_Reg_Data_Error[write_reg_num][0], write_BMI088_ACCEL_self_test_Reg_Data_Error[write_reg_num][1]);
-        BMI088_delay_us(BMI088_COM_WAIT_SENSOR_TIME);
+        BMI088_delay_ms(BMI088_COM_WAIT_SENSOR_TIME);
 
         BMI088_accel_read_single_reg(write_BMI088_ACCEL_self_test_Reg_Data_Error[write_reg_num][0], res);
-        BMI088_delay_us(BMI088_COM_WAIT_SENSOR_TIME);
+        //usart_printf("%d\r\n",write_BMI088_ACCEL_self_test_Reg_Data_Error[write_reg_num][1]);
+        BMI088_delay_ms(BMI088_COM_WAIT_SENSOR_TIME);
+        //usart_printf("%d\r\n",res);
 
         if (res != write_BMI088_ACCEL_self_test_Reg_Data_Error[write_reg_num][1])
         {
+            usart_printf("Error2\r\n");
             return write_BMI088_ACCEL_self_test_Reg_Data_Error[write_reg_num][2];
         }
+        //usart_printf("%d\r\n",write_reg_num);
         // accel conf and accel range  . the two register set need wait for > 50ms
         BMI088_delay_ms(BMI088_LONG_DELAY_TIME);
     }
+    //usart_printf("Error1\r\n");
 
     // self test include postive and negative
     for (write_reg_num = 0; write_reg_num < 2; write_reg_num++)
     {
 
         BMI088_accel_write_single_reg(write_BMI088_ACCEL_self_test_Reg_Data_Error[write_reg_num + 4][0], write_BMI088_ACCEL_self_test_Reg_Data_Error[write_reg_num + 4][1]);
-        BMI088_delay_us(BMI088_COM_WAIT_SENSOR_TIME);
+        BMI088_delay_ms(BMI088_COM_WAIT_SENSOR_TIME);
+        //usart_printf("%d\r\n",write_BMI088_ACCEL_self_test_Reg_Data_Error[write_reg_num + 4][1]);
 
         BMI088_accel_read_single_reg(write_BMI088_ACCEL_self_test_Reg_Data_Error[write_reg_num + 4][0], res);
-        BMI088_delay_us(BMI088_COM_WAIT_SENSOR_TIME);
+        BMI088_delay_ms(BMI088_COM_WAIT_SENSOR_TIME);
+        //usart_printf("%d\r\n",res);
 
         if (res != write_BMI088_ACCEL_self_test_Reg_Data_Error[write_reg_num + 4][1])
         {
+            //usart_printf("ok1\r\n");
             return write_BMI088_ACCEL_self_test_Reg_Data_Error[write_reg_num + 4][2];
         }
         // accel conf and accel range  . the two register set need wait for > 50ms
@@ -291,12 +313,13 @@ bool_t bmi088_accel_self_test(void)
 
     //set self test off
     BMI088_accel_write_single_reg(BMI088_ACC_SELF_TEST, BMI088_ACC_SELF_TEST_OFF);
-    BMI088_delay_us(BMI088_COM_WAIT_SENSOR_TIME);
+    BMI088_delay_ms(BMI088_COM_WAIT_SENSOR_TIME);
     BMI088_accel_read_single_reg(BMI088_ACC_SELF_TEST, res);
-    BMI088_delay_us(BMI088_COM_WAIT_SENSOR_TIME);
+    BMI088_delay_ms(BMI088_COM_WAIT_SENSOR_TIME);
 
     if (res != (BMI088_ACC_SELF_TEST_OFF))
     {
+        usart_printf("error3\r\n");
         return BMI088_ACC_SELF_TEST_ERROR;
     }
 
@@ -306,13 +329,14 @@ bool_t bmi088_accel_self_test(void)
 
     if ((self_test_accel[0][0] - self_test_accel[1][0] < 1365) || (self_test_accel[0][1] - self_test_accel[1][1] < 1365) || (self_test_accel[0][2] - self_test_accel[1][2] < 680))
     {
+        usart_printf("error4\r\n");
         return BMI088_SELF_TEST_ACCEL_ERROR;
     }
 
     BMI088_accel_read_single_reg(BMI088_ACC_CHIP_ID, res);
-    BMI088_delay_us(BMI088_COM_WAIT_SENSOR_TIME);
+    BMI088_delay_ms(BMI088_COM_WAIT_SENSOR_TIME);
     BMI088_accel_read_single_reg(BMI088_ACC_CHIP_ID, res);
-    BMI088_delay_us(BMI088_COM_WAIT_SENSOR_TIME);
+    BMI088_delay_ms(BMI088_COM_WAIT_SENSOR_TIME);
 
     return BMI088_NO_ERROR;
 }

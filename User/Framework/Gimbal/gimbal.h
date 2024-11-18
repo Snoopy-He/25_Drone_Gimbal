@@ -5,14 +5,17 @@
 #ifndef INC_2024_GIMBAL_GIMBAL_H
 #define INC_2024_GIMBAL_GIMBAL_H
 
+
 #ifdef __cplusplus
 extern "C" {
 #endif
 
+#include "INS_task.h"
 #include "motor.h"
 #include "remote_bsp.h"
 #include "pid.h"
 #include "debug.h"
+
 
 #define SHOOT_ID   0x200
 #define YAW_ID     0x2FE
@@ -45,6 +48,7 @@ void Middle_Angle_Set(float Yaw,float pitch);
 float Yaw_Angle_limit(float input_data,float Angle_Set,float Angle_now);
 float Pitch_Angle_limit(float input_data,float Angle_Set,float Angle_now);
 void Algorithm_Init(void);
+void IMU_Update(void);
 void Motor_Init(void);
 void Shoot_Mode_Command(void);
 void Shoot_Speed_Command(void);

@@ -21,8 +21,14 @@
 #ifndef IST8310DRIVER_H
 #define IST8310DRIVER_H
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #include <stdint.h>
-#include "../task/struct_typedef.h"
+#include "struct_typedef.h"
+
+#include "debug.h"
 
 #define IST8310_DATA_READY_BIT 2
 
@@ -39,4 +45,9 @@ typedef struct ist8310_real_data_t
 extern uint8_t ist8310_init(void);
 extern void ist8310_read_over(uint8_t *status_buf, ist8310_real_data_t *mpu6500_real_data);
 extern void ist8310_read_mag(fp32 mag[3]);
+
+#ifdef __cplusplus
+}
+#endif
+
 #endif

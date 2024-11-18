@@ -2,16 +2,16 @@
 #define BMI088MIDDLEWARE_H
 
 #include <stdint.h>
-#include "../task/struct_typedef.h"
+#include "struct_typedef.h"
 
 #define BMI088_USE_SPI
 //#define BMI088_USE_IIC
 
-#define CS1_ACCEL_GPIO_Port GPIOA
-#define CS1_GYRO_GPIO_Port  GPIOB
-#define CS1_ACCEL_Pin       GPIO_PIN_4
-#define CS1_GYRO_Pin        GPIO_PIN_0
-#define INT1_ACCEL_Pin GPIO_PIN_4
+#define CS1_ACCEL_GPIO_Port  GPIOA
+#define CS1_GYRO_GPIO_Port   GPIOB
+#define CS1_ACCEL_Pin        GPIO_PIN_4
+#define CS1_GYRO_Pin         GPIO_PIN_0
+#define INT1_ACCEL_Pin       GPIO_PIN_4
 #define INT1_ACCEL_GPIO_Port GPIOC
 #define INT1_ACCEL_EXTI_IRQn EXTI4_IRQn
 #define INT1_GYRO_Pin GPIO_PIN_5

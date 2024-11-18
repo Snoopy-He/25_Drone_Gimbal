@@ -1,8 +1,14 @@
 #ifndef BMI088DRIVER_H
 #define BMI088DRIVER_H
 
-#include "../task/struct_typedef.h"
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+#include "struct_typedef.h"
 #include "main.h"
+#include "BMI088Middleware.h"
+#include "debug.h"
 
 #define BMI088_TEMP_FACTOR 0.125f
 #define BMI088_TEMP_OFFSET 23.0f
@@ -15,7 +21,7 @@
 #define BMI088_ACCEL_TEMP_DATA_READY_BIT    2
 
 #define BMI088_LONG_DELAY_TIME      80
-#define BMI088_COM_WAIT_SENSOR_TIME 150
+#define BMI088_COM_WAIT_SENSOR_TIME 5
 
 
 #define BMI088_ACCEL_IIC_ADDRESSE   (0x18 << 1)
@@ -108,5 +114,9 @@ extern void get_BMI088_accel(fp32 accel[3]);
 
 extern void BMI088_read_gyro_who_am_i(void);
 extern void BMI088_read_accel_who_am_i(void);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif

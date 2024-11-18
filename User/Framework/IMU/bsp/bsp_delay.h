@@ -4,7 +4,7 @@
 extern "C" {
 #endif
 #include <stdint.h>
-#include "../task/struct_typedef.h"
+#include "struct_typedef.h"
 
 extern void delay_init(void);
 extern void delay_us(uint16_t nus);

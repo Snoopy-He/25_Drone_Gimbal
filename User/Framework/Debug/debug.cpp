@@ -10,8 +10,8 @@ float PID_Data[6];
 
 void Debug_Init(void)
 {
-    __HAL_UART_ENABLE_IT(&huart1,UART_IT_IDLE);
-    HAL_UART_Receive_DMA(&huart1, (uint8_t *)&RxBuffer1,RECEIVE_SIZE);
+    __HAL_UART_ENABLE_IT(&huart6,UART_IT_IDLE);
+    HAL_UART_Receive_DMA(&huart6, (uint8_t *)&RxBuffer1,RECEIVE_SIZE);
 
 }
 
@@ -35,7 +35,7 @@ void usart_printf(const char *format, ...)
     va_start(args, format);
     length = vsnprintf((char *)send_buf, TX_BUF_SIZE, (const char *)format, args);
     va_end(args);
-    HAL_UART_Transmit_DMA(&huart1, (uint8_t *)send_buf, length);
+    HAL_UART_Transmit(&huart6, (uint8_t *)send_buf, length,0xffff);
 }
 
 void Data_Operation(void)
@@ -68,14 +68,14 @@ void Data_Operation(void)
 
 void Debug_IrqHandler(void)
 {
-    if (__HAL_UART_GET_FLAG(&huart1,UART_FLAG_IDLE) != RESET)       //串口空闲中断
+    if (__HAL_UART_GET_FLAG(&huart6,UART_FLAG_IDLE) != RESET)       //串口空闲中断
     {
-        __HAL_UART_CLEAR_IDLEFLAG(&huart1);
-        HAL_UART_DMAStop(&huart1);
+        __HAL_UART_CLEAR_IDLEFLAG(&huart6);
+        HAL_UART_DMAStop(&huart6);
         memcpy(RxData1,RxBuffer1,10);
         Data_Operation();
         memset(RxBuffer1, 0, sizeof(RxBuffer1));
-        HAL_UART_Receive_DMA(&huart1, (uint8_t *)&RxBuffer1, RECEIVE_SIZE);
+        HAL_UART_Receive_DMA(&huart6, (uint8_t *)&RxBuffer1, RECEIVE_SIZE);
     }
 }
 

@@ -50,6 +50,7 @@
 osThreadId defaultTaskHandle;
 osThreadId gimbal_motorHandle;
 osThreadId printfHandle;
+osThreadId imu_taskHandle;
 
 /* Private function prototypes -----------------------------------------------*/
 /* USER CODE BEGIN FunctionPrototypes */
@@ -59,6 +60,7 @@ osThreadId printfHandle;
 void StartDefaultTask(void const * argument);
 extern void Gimbal_Motor_Task(void const * argument);
 extern void Printf_Task(void const * argument);
+void INS_Task(void const * argument);
 
 void MX_FREERTOS_Init(void); /* (MISRA C 2004 rule 8.1) */
 
@@ -117,6 +119,10 @@ void MX_FREERTOS_Init(void) {
   osThreadDef(printf, Printf_Task, osPriorityIdle, 0, 256);
   printfHandle = osThreadCreate(osThread(printf), NULL);
 
+  /* definition and creation of imu_task */
+  osThreadDef(imu_task, INS_Task, osPriorityHigh, 0, 1024);
+  imu_taskHandle = osThreadCreate(osThread(imu_task), NULL);
+
   /* USER CODE BEGIN RTOS_THREADS */
   /* add threads, ... */
   /* USER CODE END RTOS_THREADS */
@@ -139,6 +145,24 @@ void StartDefaultTask(void const * argument)
     osDelay(1);
   }
   /* USER CODE END StartDefaultTask */
+}
+
+/* USER CODE BEGIN Header_INS_Task */
+/**
+* @brief Function implementing the imu_task thread.
+* @param argument: Not used
+* @retval None
+*/
+/* USER CODE END Header_INS_Task */
+__weak void INS_Task(void const * argument)
+{
+  /* USER CODE BEGIN INS_Task */
+  /* Infinite loop */
+  for(;;)
+  {
+    osDelay(1);
+  }
+  /* USER CODE END INS_Task */
 }
 
 /* Private application code --------------------------------------------------*/

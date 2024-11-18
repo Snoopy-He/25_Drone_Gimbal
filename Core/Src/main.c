@@ -68,12 +68,13 @@ void main_Init(void)
     SystemClock_Config();
     MX_GPIO_Init();
     MX_DMA_Init();
-    MX_USART1_UART_Init();
+    MX_USART6_UART_Init();
     MX_USART3_UART_Init();
     MX_CAN1_Init();
     MX_CAN2_Init();
     MX_SPI1_Init();
     MX_TIM10_Init();
+    MX_I2C3_Init();
 }
 
 void os_Init(void)

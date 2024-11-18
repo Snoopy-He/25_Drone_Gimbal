@@ -50,10 +50,8 @@ else ()
     add_compile_options(-Og -g)
 endif ()
 
-include_directories(Core/Inc Drivers/STM32F4xx_HAL_Driver/Inc Drivers/STM32F4xx_HAL_Driver/Inc/Legacy Drivers/CMSIS/Device/ST/STM32F4xx/Include Drivers/CMSIS/Include Middlewares/Third_Party/FreeRTOS/Source/include Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM4F)
-include_directories(Middlewares/ST/ARM/DSP/lnc
-                    Middlewares/ST/ARM/DSP/Lib
-                    User/Framework/Gimbal_BSP/Remote_bsp
+include_directories(Core/Inc Drivers/STM32F4xx_HAL_Driver/Inc Drivers/STM32F4xx_HAL_Driver/Inc/Legacy Drivers/CMSIS/Device/ST/STM32F4xx/Include Drivers/CMSIS/Include Middlewares/Third_Party/FreeRTOS/Source/include Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM4F Middlewares/ST/ARM/DSP/Inc)
+include_directories(User/Framework/Gimbal_BSP/Remote_bsp
                     User/Framework/Gimbal_BSP/Can_bsp
                     User/Framework/RemoteC
                     User/Framework/PID
@@ -70,7 +68,8 @@ include_directories(Middlewares/ST/ARM/DSP/lnc
                     User/Framework/IMU
                     User/MotorC
                     Tasks/Gimbal_Motor
-                    Tasks/Printf)
+                    Tasks/Printf
+                    Tasks/IMU_Task)
 
 
 add_definitions(-DDEBUG -DUSE_HAL_DRIVER -DSTM32F407xx)
@@ -86,7 +85,7 @@ add_definitions(
             -DARM_MATH_ROUNDING
 )
 
-file(GLOB_RECURSE SOURCES "Core/*.*" "Middlewares/*.*" "Drivers/*.*" "Users/*.*")
+file(GLOB_RECURSE SOURCES "Library/*.*" "Core/*.*" "Middlewares/*.*" "Drivers/*.*" "User/*.*" "Tasks/*.*")
 
 set(LINKER_SCRIPT ${CMAKE_SOURCE_DIR}/STM32F407IGHX_FLASH.ld)
 
@@ -94,33 +93,11 @@ add_link_options(-Wl,-gc-sections,--print-memory-usage,-Map=${PROJECT_BINARY_DIR
 add_link_options(-mcpu=cortex-m4 -mthumb -mthumb-interwork)
 add_link_options(-T ${LINKER_SCRIPT})
 
-add_executable(${PROJECT_NAME}.elf ${SOURCES} ${LINKER_SCRIPT}
-              Core/Src/main.cpp
-              User/Framework/Gimbal_BSP/Remote_bsp/remote_bsp.cpp
-              User/Framework/Gimbal_BSP/Remote_bsp/remote_bsp.h
-              User/Framework/Gimbal_BSP/Can_bsp/can_bsp.cpp
-              User/Framework/Gimbal_BSP/Can_bsp/can_bsp.h
-              User/Framework/IMU
-              User/Framework/IMU/algorithm
-              User/Framework/IMU/algorithm/Include
-              User/Framework/IMU/bsp
-              User/Framework/IMU/controller
-              User/Framework/IMU/devices
-              User/Framework/IMU/task
-              User/Framework/RemoteC/remotec.cpp
-              User/Framework/RemoteC/remotec.h
-              User/Framework/PID/pid.cpp
-              User/Framework/PID/pid.h
-              User/Framework/Debug/debug.cpp
-              User/Framework/Debug/debug.h
-              User/Framework/Gimbal/gimbal.cpp
-              User/Framework/Gimbal/gimbal.h
-              User/MotorC/motor.cpp
-              User/MotorC/motor.h
-              Tasks/Gimbal_Motor/Gimbal_Motor_Task.cpp
-              Tasks/Gimbal_Motor/Gimbal_Motor_Task.h
-              Tasks/Printf/Printf_Task.cpp
-              Tasks/Printf/Printf_Task.h)
+link_directories(${PROJECT_SOURCE_DIR}/Middlewares/ST/ARM/DSP/Lib)
+link_libraries("arm_cortexM4lf_math.a")
+link_directories(${PROJECT_SOURCE_DIR}/User/Framework/IMU/algorithm)
+
+add_executable(${PROJECT_NAME}.elf ${SOURCES} ${LINKER_SCRIPT})
 
 target_link_libraries(${PROJECT_NAME}.elf ${PROJECT_SOURCE_DIR}/User/Framework/IMU/algorithm/AHRS.lib)
 

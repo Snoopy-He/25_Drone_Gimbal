@@ -2,7 +2,7 @@
 #define USER_LIB_H
 
 #include <stdint.h>
-#include "../task/struct_typedef.h"
+#include "struct_typedef.h"
 
 typedef struct
 {
