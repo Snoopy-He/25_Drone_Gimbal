@@ -3,15 +3,9 @@
 
 #include <stdint.h>
 #include "struct_typedef.h"
+#include "tim.h"
 
-#ifdef __cplusplus
-extern "C" {
-#endif
 
-extern void imu_pwm_set(uint16_t pwm);
-
-#ifdef __cplusplus
-}
-#endif
+extern void TIM_Set_PWM(TIM_HandleTypeDef *tim_pwmHandle, uint8_t Channel, uint16_t value);
 
 #endif

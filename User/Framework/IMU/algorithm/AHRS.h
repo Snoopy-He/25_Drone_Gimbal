@@ -1,10 +1,6 @@
 #ifndef AHRS_H
 #define AHRS_H
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-
 #include "AHRS_middleware.h"
 
 /**
@@ -61,9 +57,5 @@ extern void get_angle(const fp32 quat[4], fp32 *yaw, fp32 *pitch, fp32 *roll);
   * @retval         返回重力加速度 单位 m/s2
   */
 extern fp32 get_carrier_gravity(void);
-
-#ifdef __cplusplus
-}
-#endif
 
 #endif

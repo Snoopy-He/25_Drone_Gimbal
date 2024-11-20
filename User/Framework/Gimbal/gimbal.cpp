@@ -28,7 +28,8 @@ float Middle_Pitch_Angle = 0.0f;
 float Algo_Yaw_Data;
 float Algo_Pitch_Data;
 extern RC_ctrl_t rc_ctrl;
-extern Imu_Message IMU_Data;
+extern IMU_data C_IMU_Data;
+
 
 
 void Middle_Angle_Set(float Yaw,float pitch)
@@ -142,12 +143,12 @@ void Gimbal_loop(void)
 {
     Get_CtrlData();
     Algorithm_run();
+    C_IMU_Update();
     //Shoot_Command_Send();
     //DM_Motor_Speed_Mode_Send(PITCH_ID,0);
     //Can2_Send(SHOOT_ID,1000,1000,0,0);
     //Can1_Send(SHOOT_ID,1000,1000,0,0);
     Yaw_Command_Send();
     Pitch_Command_Send();
-    IMU_Data.temperature = getIMUTemp();
     //Can2_Send(0X2FE,1000,1000,1000,1000);
 }

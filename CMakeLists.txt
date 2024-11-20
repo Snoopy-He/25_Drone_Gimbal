@@ -56,6 +56,7 @@ include_directories(User/Framework/Gimbal_BSP/Remote_bsp
                     User/Framework/RemoteC
                     User/Framework/PID
                     User/Framework/Debug
+                    User/Framework/Filters
                     User/Framework/Gimbal
                     User/Framework/IMU
                     User/Framework/IMU/algorithm

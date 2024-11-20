@@ -1,13 +1,8 @@
 #ifndef BMI088DRIVER_H
 #define BMI088DRIVER_H
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-
 #include "struct_typedef.h"
 #include "main.h"
-#include "BMI088Middleware.h"
 #include "debug.h"
 
 #define BMI088_TEMP_FACTOR 0.125f
@@ -21,7 +16,7 @@ extern "C" {
 #define BMI088_ACCEL_TEMP_DATA_READY_BIT    2
 
 #define BMI088_LONG_DELAY_TIME      80
-#define BMI088_COM_WAIT_SENSOR_TIME 5
+#define BMI088_COM_WAIT_SENSOR_TIME 30
 
 
 #define BMI088_ACCEL_IIC_ADDRESSE   (0x18 << 1)
@@ -51,6 +46,34 @@ extern "C" {
 #define BMI088_GYRO_250_SEN     0.00013315805450396191230191732547673f
 #define BMI088_GYRO_125_SEN     0.000066579027251980956150958662738366f
 
+#define INFANTRY_ID 0
+// ���ֶ��޸�
+#if INFANTRY_ID == 0
+#define GxOFFSET 0.00247530174f
+#define GyOFFSET 0.000393082853f
+#define GzOFFSET 0.000393082853f
+#define gNORM 9.69293118f
+#elif INFANTRY_ID == 1
+#define GxOFFSET 0.0007222f
+#define GyOFFSET -0.001786f
+#define GzOFFSET 0.0004346f
+#define gNORM 9.876785f
+#elif INFANTRY_ID == 2
+#define GxOFFSET 0.0007222f
+#define GyOFFSET -0.001786f
+#define GzOFFSET 0.0004346f
+#define gNORM 9.876785f
+#elif INFANTRY_ID == 3
+#define GxOFFSET 0.00270364084f
+#define GyOFFSET -0.000532632112f
+#define GzOFFSET 0.00478090625f
+#define gNORM 9.73574924f
+#elif INFANTRY_ID == 4
+#define GxOFFSET 0.0007222f
+#define GyOFFSET -0.001786f
+#define GzOFFSET 0.0004346f
+#define gNORM 9.876785f
+#endif
 
 typedef struct BMI088_RAW_DATA
 {
@@ -68,6 +91,21 @@ typedef struct BMI088_REAL_DATA
     fp32 gyro[3];
     fp32 time;
 } bmi088_real_data_t;
+
+typedef struct
+{
+    float Accel[3];
+
+    float Gyro[3];
+
+    float TempWhenCali;
+    float Temperature;
+
+    float AccelScale;
+    float GyroOffset[3];
+
+    float gNorm;
+} IMU_Data_t;
 
 
 enum
@@ -105,7 +143,7 @@ extern bool_t bmi088_gyro_init(void);
 extern void BMI088_accel_read_over(uint8_t *rx_buf, fp32 accel[3], fp32 *time);
 extern void BMI088_gyro_read_over(uint8_t *rx_buf, fp32 gyro[3]);
 extern void BMI088_temperature_read_over(uint8_t *rx_buf, fp32 *temperate);
-extern void BMI088_read(fp32 gyro[3], fp32 accel[3], fp32 *temperate);
+extern void BMI088_Read(IMU_Data_t *bmi088);
 extern uint32_t get_BMI088_sensor_time(void);
 extern fp32 get_BMI088_temperate(void);
 extern void get_BMI088_gyro(int16_t gyro[3]);
@@ -114,9 +152,5 @@ extern void get_BMI088_accel(fp32 accel[3]);
 
 extern void BMI088_read_gyro_who_am_i(void);
 extern void BMI088_read_accel_who_am_i(void);
-
-#ifdef __cplusplus
-}
-#endif
-
+extern IMU_Data_t BMI088;
 #endif

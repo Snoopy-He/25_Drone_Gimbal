@@ -51,10 +51,8 @@ uint8_t ist8310_init(void)
     ist8310_delay_ms(sleepTime);
 
     res = ist8310_IIC_read_single_reg(IST8310_WHO_AM_I);
-    //usart_printf("%d\r\n",res);
     if (res != IST8310_WHO_AM_I_VALUE)
     {
-        //usart_printf("Error1\r\n");
         return IST8310_NO_SENSOR;
     }
     ist8310_delay_ms(wait_time);
@@ -67,7 +65,6 @@ uint8_t ist8310_init(void)
         ist8310_delay_ms(wait_time);
         if (res != ist8310_write_reg_data_error[writeNum][1])
         {
-            //usart_printf("Error2\r\n");
             return ist8310_write_reg_data_error[writeNum][2];
         }
     }

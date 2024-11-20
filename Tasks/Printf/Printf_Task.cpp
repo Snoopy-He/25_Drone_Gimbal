@@ -19,7 +19,7 @@ extern char RxData1[MESSAGE_LENGTH];
 extern float PID_Data[6];
 extern float Algo_Yaw_Data;
 extern float Algo_Pitch_Data;
-extern Imu_Message IMU_Data;
+extern IMU_data C_IMU_Data;
 
 void Printf_Task(void const * argument)
 {
@@ -47,7 +47,7 @@ void Printf_Task(void const * argument)
         //usart_printf("%f,%f\r\n",PitchMotor_Data.Angle + 180,Algo_Pitch_Data);
         //usart_printf("%f,%f\r\n",(float)PitchMotor_Data.Speed/3.1415926/2*60,(float)rc_ctrl.rc.ch[3]/100);
         //usart_printf("%f,%f\r\n",(float)rc_ctrl.rc.ch[3] / 20,(float)PitchMotor_Data.Speed*30/3.1415926);
-        //usart_printf("%f\r\n",IMU_Data.temperature);
+        usart_printf("%f\r\n",C_IMU_Data.Speed.Roll);
         vTaskDelayUntil(&CurrentTime, 2 / portTICK_RATE_MS);
     }
     /* USER CODE END Printf_Task */

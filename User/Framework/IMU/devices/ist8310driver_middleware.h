@@ -25,12 +25,6 @@
 #define IST8310_IIC_ADDRESS (0x0E << 1)  //IST8310的IIC地址
 #define IST8310_IIC_READ_MSB (0x80) //IST8310的SPI读取发送第一个bit为1
 
-#define RSTN_IST8310_GPIO_Port GPIOG
-#define RSTN_IST8310_Pin GPIO_PIN_6
-#define DRDY_IST8310_Pin GPIO_PIN_3
-#define DRDY_IST8310_GPIO_Port GPIOG
-#define DRDY_IST8310_EXTI_IRQn EXTI3_IRQn
-
 extern void ist8310_GPIO_init(void); //ist8310的io初始化
 extern void ist8310_com_init(void);  //ist8310的通讯初始化
 extern uint8_t ist8310_IIC_read_single_reg(uint8_t reg);

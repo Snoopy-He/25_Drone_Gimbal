@@ -20,6 +20,22 @@ typedef struct
     fp32 num[1];       //滤波参数
     fp32 frame_period; //滤波的时间间隔 单位 s
 } first_order_filter_type_t;
+
+typedef  struct
+{
+    uint16_t Order;
+    uint32_t Count;
+
+    float *x;
+    float *y;
+
+    float k;
+    float b;
+
+    float StandardDeviation;
+
+    float t[4];
+} Ordinary_Least_Squares_t;
 //快速开方
 extern fp32 invSqrt(fp32 num);
 
@@ -48,7 +64,10 @@ extern int16_t int16_constrain(int16_t Value, int16_t minValue, int16_t maxValue
 extern fp32 loop_fp32_constrain(fp32 Input, fp32 minValue, fp32 maxValue);
 //角度 °限幅 180 ~ -180
 extern fp32 theta_format(fp32 Ang);
+extern int float_rounding(float raw);
 
+extern void OLS_Init(Ordinary_Least_Squares_t *OLS, uint16_t order);
+extern float OLS_Derivative(Ordinary_Least_Squares_t *OLS, float deltax, float y);
 //弧度格式化为-PI~PI
 #define rad_format(Ang) loop_fp32_constrain((Ang), -PI, PI)
 

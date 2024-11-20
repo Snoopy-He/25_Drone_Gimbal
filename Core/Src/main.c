@@ -75,6 +75,7 @@ void main_Init(void)
     MX_SPI1_Init();
     MX_TIM10_Init();
     MX_I2C3_Init();
+
 }
 
 void os_Init(void)
