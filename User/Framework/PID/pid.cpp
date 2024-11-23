@@ -40,10 +40,10 @@ void PIDc::PID_Init(PID_t *WhichPID)
 	* @param  WhichPID PID结构体指针,NowInput 当前PID输入值
   	* @retval None
 */
-void PIDc::PID_Update(PID_t *WhichPID,float NowInput,float Target)
+void PIDc::PID_Update(PID_t *WhichPID,float NowInput,float Target_Spd)
 {
     WhichPID->PID_Input = NowInput;
-    WhichPID->PID_Target = Target;
+    WhichPID->PID_Target = Target_Spd;
     WhichPID->PID_Err_lastlast = WhichPID->PID_Err_last;
     WhichPID->PID_Err_last = WhichPID->PID_Err_now;
     WhichPID->PID_Err_now = WhichPID->PID_Target - WhichPID->PID_Input;
@@ -137,11 +137,13 @@ float PIDc::PID_IncrementPID(PID_t *WhichPID)
 	* @param  WhichPID PID结构体指针
     * @retval None
 */
-float PIDc::Double_Param_Pos_PID(PID_t *SpdParam,PID_t *PosParam)
+float PIDc::Double_Param_Pos_PID(PID_t *SpdParam,PID_t *PosParam,float Pos_Target,float Spd_Target)
 {
-    PID_PositionPID(SpdParam);
-    PID_Update(PosParam,SpdParam->PID_Out,2 * SpdParam->PID_Out);  //Target如此赋值是为让位置环的Erroe_Now和input相等，Error_Now=Target - NowInput
+    SpdParam->PID_Target = Pos_Target;
+    PID_Update(PosParam,SpdParam->PID_Target,SpdParam->PID_Out);
     PID_PositionPID(PosParam);
+    PID_Update(SpdParam,SpdParam->PID_Target,SpdParam->PID_Out);  //Target如此赋值是为让位置环的Erroe_Now和input相等，Error_Now=Target - NowInput
+    PID_PositionPID(SpdParam);
 
     return PosParam->PID_Out;
 }

@@ -65,12 +65,12 @@ void Pitch_PID_Init(void)
     Pitch_PID.PID_Init(&Pitch_PID.SpdParam);
     Pitch_PID.PID_Init(&Pitch_PID.PosParam);
 
-    Pitch_PID.SpdParam.Kp1 = 0.1f;
-    Pitch_PID.SpdParam.Ki1 = 0.01f;
-    Pitch_PID.SpdParam.Kd1 = 0.1f;
+    Pitch_PID.SpdParam.Kp1 = 0.012f;
+    Pitch_PID.SpdParam.Ki1 = 0.00025f;
+    Pitch_PID.SpdParam.Kd1 = 0.0f;
     Pitch_PID.SpdParam.PID_ErrAllMax = 80000;
 
-    Pitch_PID.PosParam.Kp1 = 1.0f;
+    Pitch_PID.PosParam.Kp1 = 1.2f;
     Pitch_PID.PosParam.Ki1 = 0.0f;
     Pitch_PID.PosParam.Kd1 = 0.0f;
 

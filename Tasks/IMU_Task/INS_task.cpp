@@ -14,6 +14,7 @@
 
 #define MPU6500_TEMP_PWM_MAX 5000
 INS_t INS;
+extern QEKF_INS_t QEKF_INS;
 IMU_Param_t IMU_Param;
 hPID_t TempCtrl = {0};
 static uint8_t first_temperate;
@@ -44,13 +45,15 @@ void INS_Init(void)
     IMU_Param.flag = 1;
 
     IMU_QuaternionEKF_Init(10, 0.001, 10000000, 1, 0);
+
     // imu heat init
     PID_Init(&TempCtrl, 2000, 300, 0, 1500, 20, 0, 0, 0, 0, 0, 0, 0);
     HAL_TIM_PWM_Start(&htim10, TIM_CHANNEL_1);
 
     INS.AccelLPF = 0.0085;
-//    osDelay(50);
-//    BMI088_Read(&BMI088);
+    osDelay(50);
+    BMI088_Read(&BMI088);
+
 //
 //    RefTemp = BMI088.Temperature;
 }
@@ -83,7 +86,6 @@ void INS_task(void)
 
         // 核心函数,EKF更新四元数
         IMU_QuaternionEKF_Update(INS.Gyro[X], INS.Gyro[Y], INS.Gyro[Z], INS.Accel[X], INS.Accel[Y], INS.Accel[Z], dt);
-
         memcpy(INS.q, QEKF_INS.q, sizeof(QEKF_INS.q));
 
         // 机体系基向量转换到导航坐标系，本例选取惯性系为导航系
@@ -344,14 +346,18 @@ void INS_Task(void const * argument)
     };
 
     INS_Init();
+    usart_printf("%f\r\n",QEKF_INS.IMU_QuaternionEKF.xhat_data[0]);
+    INS_task();
 
 /* Infinite loop */
     for (;;)
     {
         CurrentTime = xTaskGetTickCount();
+        //usart_printf("%f\r\n",QEKF_INS.IMU_QuaternionEKF.xhat_data[0]);
+        //usart_printf("%f\r\n",QEKF_INS.Roll);
         INS_task();
 
-        vTaskDelayUntil(&CurrentTime, 2 / portTICK_RATE_MS);
+        vTaskDelayUntil(&CurrentTime, 5 / portTICK_RATE_MS);
     }
 }
 
@@ -423,4 +429,6 @@ void C_IMU_Update(void)
     C_IMU_Data.Angle.Yaw = C_IMU_Angle(0);
     C_IMU_Data.Angle.Pitch = C_IMU_Angle(1);
     C_IMU_Data.Angle.Roll = C_IMU_Angle(2);
+    //C_IMU_Data.Angle.Roll = BMI088.Accel[X];
+    //C_IMU_Data.Angle.Roll = QEKF_INS.YawTotalAngle;
 }

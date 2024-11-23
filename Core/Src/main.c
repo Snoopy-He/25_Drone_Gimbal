@@ -21,6 +21,7 @@
 #include "cmsis_os.h"
 #include "can.h"
 #include "dma.h"
+#include "fatfs.h"
 #include "i2c.h"
 #include "spi.h"
 #include "tim.h"

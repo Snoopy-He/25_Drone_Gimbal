@@ -56,6 +56,9 @@ void IMU_QuaternionEKF_Init(float process_noise1, float process_noise2, float me
     QEKF_INS.ConvergeFlag = 0;
     QEKF_INS.ErrorCount = 0;
     QEKF_INS.UpdateCount = 0;
+    QEKF_INS.Yaw = 0.0f;
+    QEKF_INS.Roll = 0.0f;
+    QEKF_INS.Pitch = 0.0f;
     if (lambda > 1)
     {
         lambda = 1;
@@ -68,10 +71,10 @@ void IMU_QuaternionEKF_Init(float process_noise1, float process_noise2, float me
     Matrix_Init(&QEKF_INS.ChiSquare, 1, 1, (float *)QEKF_INS.ChiSquare_Data);
 
     // 姿态初始化
-    QEKF_INS.IMU_QuaternionEKF.xhat_data[0] = 1;
-    QEKF_INS.IMU_QuaternionEKF.xhat_data[1] = 0;
-    QEKF_INS.IMU_QuaternionEKF.xhat_data[2] = 0;
-    QEKF_INS.IMU_QuaternionEKF.xhat_data[3] = 0;
+    QEKF_INS.IMU_QuaternionEKF.xhat_data[0] = 1.0f;
+    QEKF_INS.IMU_QuaternionEKF.xhat_data[1] = 0.0f;
+    QEKF_INS.IMU_QuaternionEKF.xhat_data[2] = 0.0f;
+    QEKF_INS.IMU_QuaternionEKF.xhat_data[3] = 0.0f;
 
     // 自定义函数初始化,用于扩展或增加kf的基础功能
     QEKF_INS.IMU_QuaternionEKF.User_Func0_f = IMU_QuaternionEKF_Observe;
@@ -337,7 +340,6 @@ static void IMU_QuaternionEKF_xhatUpdate(KalmanFilter_t *kf)
     kf->S.numCols = kf->R.numCols;
     kf->MatStatus = Matrix_Add(&kf->temp_matrix1, &kf->R, &kf->S); // S = H P'(k) HT + R
     kf->MatStatus = Matrix_Inverse(&kf->S, &kf->temp_matrix1);     // temp_matrix1 = inv(H·P'(k)·HT + R)
-
     q0 = kf->xhatminus_data[0];
     q1 = kf->xhatminus_data[1];
     q2 = kf->xhatminus_data[2];
@@ -349,7 +351,6 @@ static void IMU_QuaternionEKF_xhatUpdate(KalmanFilter_t *kf)
     kf->temp_vector_data[0] = 2 * (q1 * q3 - q0 * q2);
     kf->temp_vector_data[1] = 2 * (q0 * q1 + q2 * q3);
     kf->temp_vector_data[2] = q0 * q0 - q1 * q1 - q2 * q2 + q3 * q3; // temp_vector = h(xhat'(k))
-
     // 计算预测值和各个轴的方向余弦
     for (uint8_t i = 0; i < 3; i++)
     {
@@ -360,7 +361,6 @@ static void IMU_QuaternionEKF_xhatUpdate(KalmanFilter_t *kf)
     kf->temp_vector1.numRows = kf->z.numRows;
     kf->temp_vector1.numCols = 1;
     kf->MatStatus = Matrix_Subtract(&kf->z, &kf->temp_vector, &kf->temp_vector1); // temp_vector1 = z(k) - h(xhat'(k))
-
     // chi-square test,卡方检验
     kf->temp_matrix.numRows = kf->temp_vector1.numRows;
     kf->temp_matrix.numCols = 1;
@@ -423,7 +423,6 @@ static void IMU_QuaternionEKF_xhatUpdate(KalmanFilter_t *kf)
     kf->temp_matrix.numCols = kf->HT.numCols;
     kf->MatStatus = Matrix_Multiply(&kf->Pminus, &kf->HT, &kf->temp_matrix); // temp_matrix = P'(k)·HT
     kf->MatStatus = Matrix_Multiply(&kf->temp_matrix, &kf->temp_matrix1, &kf->K);
-
     // implement adaptive
     for (uint8_t i = 0; i < kf->K.numRows * kf->K.numCols; i++)
     {
@@ -440,7 +439,6 @@ static void IMU_QuaternionEKF_xhatUpdate(KalmanFilter_t *kf)
     kf->temp_vector.numRows = kf->K.numRows;
     kf->temp_vector.numCols = 1;
     kf->MatStatus = Matrix_Multiply(&kf->K, &kf->temp_vector1, &kf->temp_vector); // temp_vector = K(k)·(z(k) - H·xhat'(k))
-
     // 零漂修正限幅,一般不会有过大的漂移
     if (QEKF_INS.ConvergeFlag)
     {

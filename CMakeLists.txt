@@ -50,7 +50,7 @@ else ()
     add_compile_options(-Og -g)
 endif ()
 
-include_directories(Core/Inc Drivers/STM32F4xx_HAL_Driver/Inc Drivers/STM32F4xx_HAL_Driver/Inc/Legacy Drivers/CMSIS/Device/ST/STM32F4xx/Include Drivers/CMSIS/Include Middlewares/Third_Party/FreeRTOS/Source/include Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM4F Middlewares/ST/ARM/DSP/Inc)
+include_directories(Core/Inc Drivers/STM32F4xx_HAL_Driver/Inc Drivers/STM32F4xx_HAL_Driver/Inc/Legacy Drivers/CMSIS/Device/ST/STM32F4xx/Include Drivers/CMSIS/Include Middlewares/Third_Party/FreeRTOS/Source/include Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM4F Middlewares/ST/ARM/DSP/Inc FATFS/Target FATFS/App Middlewares/Third_Party/FatFs/src)
 include_directories(User/Framework/Gimbal_BSP/Remote_bsp
                     User/Framework/Gimbal_BSP/Can_bsp
                     User/Framework/RemoteC
@@ -86,7 +86,7 @@ add_definitions(
             -DARM_MATH_ROUNDING
 )
 
-file(GLOB_RECURSE SOURCES "Library/*.*" "Core/*.*" "Middlewares/*.*" "Drivers/*.*" "User/*.*" "Tasks/*.*")
+file(GLOB_RECURSE SOURCES "Library/*.*" "Core/*.*" "FATFS/*.*" "Middlewares/*.*" "Drivers/*.*" "User/*.*" "Tasks/*.*")
 
 set(LINKER_SCRIPT ${CMAKE_SOURCE_DIR}/STM32F407IGHX_FLASH.ld)
 

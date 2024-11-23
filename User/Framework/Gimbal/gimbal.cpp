@@ -107,13 +107,14 @@ void Algorithm_run(void)
     //PID_Debug_Set(&FricR_PID.SpdParam,&FricR_PID.PosParam);
     //PID_Debug_Set(&Rammc_PID.SpdParam,&Rammc_PID.PosParam);
     //PID_Debug_Set(&Yaw_PID.SpdParam,&Yaw_PID.PosParam);
+    //PID_Debug_Set(&Pitch_PID.SpdParam,&Pitch_PID.PosParam);
     Yaw_PID.PID_Update(&Yaw_PID.SpdParam,YawMotor_Data.Speed,  (float)rc_ctrl.rc.ch[2] / 100);
-    Pitch_PID.PID_Update(&Pitch_PID.SpdParam,(float)PitchMotor_Data.Speed*30/pi,  (float)rc_ctrl.rc.ch[3] / 20 -1.17);
+    Pitch_PID.PID_Update(&Pitch_PID.SpdParam,C_IMU_Data.Speed.Roll,  (float)rc_ctrl.rc.ch[3] / 10);
     FricL_PID.PID_Update(&FricL_PID.SpdParam,FricL_Data.Speed,(int16_t)(rc_ctrl.rc.ch[0] * 9));
     FricR_PID.PID_Update(&FricR_PID.SpdParam,FricR_Data.Speed,(int16_t)(-(rc_ctrl.rc.ch[0] * 9)));
     Rammc_PID.PID_Update(&Rammc_PID.SpdParam,Rammc_Data.Speed,(int16_t)(rc_ctrl.rc.ch[0] * 9));
-    Algo_Yaw_Data = Yaw_PID.Double_Param_Pos_PID(&Yaw_PID.SpdParam,&Yaw_PID.PosParam);
-    Algo_Pitch_Data = Pitch_PID.Double_Param_Pos_PID(&Pitch_PID.SpdParam,&Pitch_PID.PosParam);
+    //Algo_Yaw_Data = Yaw_PID.Double_Param_Pos_PID(&Yaw_PID.SpdParam,&Yaw_PID.PosParam);
+    //Algo_Pitch_Data = Pitch_PID.Double_Param_Pos_PID(&Pitch_PID.SpdParam,&Pitch_PID.PosParam,);
 
     Algo_Yaw_Data = Yaw_Angle_limit(Algo_Yaw_Data,12,YawMotor_Data.Angle);
     Algo_Pitch_Data = Pitch_Angle_limit(Algo_Pitch_Data,30,PitchMotor_Data.Angle);

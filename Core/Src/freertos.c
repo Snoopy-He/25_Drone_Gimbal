@@ -53,7 +53,7 @@ osThreadId defaultTaskHandle;
 osThreadId gimbal_motorHandle;
 osThreadId printfHandle;
 osThreadId imu_taskHandle;
-uint32_t imu_taskBuffer[ 1024 ];
+uint32_t imu_taskBuffer[ 2048 ];
 osStaticThreadDef_t imu_taskControlBlock;
 
 /* Private function prototypes -----------------------------------------------*/
@@ -64,7 +64,7 @@ osStaticThreadDef_t imu_taskControlBlock;
 void StartDefaultTask(void const * argument);
 void Gimbal_Motor_Task(void const * argument);
 void Printf_Task(void const * argument);
-//void INS_Task(void const * argument);
+void INS_Task(void const * argument);
 
 void MX_FREERTOS_Init(void); /* (MISRA C 2004 rule 8.1) */
 
@@ -124,7 +124,7 @@ void MX_FREERTOS_Init(void) {
   printfHandle = osThreadCreate(osThread(printf), NULL);
 
   /* definition and creation of imu_task */
-  osThreadStaticDef(imu_task, INS_Task, osPriorityHigh, 0, 1024, imu_taskBuffer, &imu_taskControlBlock);
+  osThreadStaticDef(imu_task, INS_Task, osPriorityHigh, 0, 2048, imu_taskBuffer, &imu_taskControlBlock);
   imu_taskHandle = osThreadCreate(osThread(imu_task), NULL);
 
   /* USER CODE BEGIN RTOS_THREADS */

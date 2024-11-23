@@ -21,7 +21,7 @@ void Gimbal_Motor_Task(void const * argument)
         Gimbal_loop();
         //Can_Send(0X200,1000,0,0,0);
 
-        vTaskDelayUntil(&CurrentTime, 2 / portTICK_RATE_MS);
+        vTaskDelayUntil(&CurrentTime, 5 / portTICK_RATE_MS);
     }
     /* USER CODE END Gimbal_Motor_Task */
 }

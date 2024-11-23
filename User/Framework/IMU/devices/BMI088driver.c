@@ -89,7 +89,7 @@ static uint8_t write_BMI088_gyro_reg_data_error[BMI088_WRITE_GYRO_REG_NUM][3] =
 
 };
 
-// 较准零飘
+// 校准零飘
 void Calibrate_MPU_Offset(IMU_Data_t *bmi088)
 {
     static float startTime;

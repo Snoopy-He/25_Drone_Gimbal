@@ -23,11 +23,12 @@
 */
 
 #include "stm32f407xx.h"
-#include "arm_math.h"
-//#include "dsp/matrix_functions.h"
+#include "arm_math_imu.h"
+//#include "matrix_functions.h"
 #include "math.h"
 #include "stdint.h"
 #include "stdlib.h"
+#include "debug.h"
 
 #ifndef user_malloc
 #ifdef _CMSIS_OS_H

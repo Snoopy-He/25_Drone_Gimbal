@@ -8,6 +8,7 @@
 #include "debug.h"
 #include "BMI088driver.h"
 #include "ist8310driver.h"
+#include "bsp_delay.h"
 
 
 int main(void)
@@ -19,7 +20,9 @@ int main(void)
     HAL_Delay(1500);    //达妙电机的上电自检，等一下自检
     Motor_Init();
     Debug_Init();
-    Middle_Angle_Set(8135.0f,140.0f);
+    delay_init();
+    DWT_Init(168);
+    Middle_Angle_Set(8135.0f,-40.0f);
 
     os_Init();
 
