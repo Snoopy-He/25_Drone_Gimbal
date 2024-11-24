@@ -16,6 +16,7 @@ extern "C" {
 #include "can_bsp.h"
 #include "debug.h"
 #include "INS_task.h"
+#include "gimbal.h"
 
 void Printf_Task(void const * argument);
 

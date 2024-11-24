@@ -57,7 +57,7 @@ public:
     void PID_Update(PID_t *WhichPID,float NowInput,float Target_Spd);
     float PID_PositionPID(PID_t *WhichPID);
     float PID_IncrementPID(PID_t *WhichPID);
-    float Double_Param_Pos_PID(PID_t *SpdParam,PID_t *PosParam,float Pos_Target,float Spd_Target);
+    float Double_Param_Pos_PID(PID_t *SpdParam,PID_t *PosParam,float Pos_Input,float Pos_Target,float Spd_Target);
     float Variable_Speed_PID(PID_t *WhichPID);
     float Double_Param_VSpd_PID(PID_t *SpdParam,PID_t *PosParam);
     PID_t SpdParam;

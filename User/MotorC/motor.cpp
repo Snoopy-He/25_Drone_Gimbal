@@ -13,6 +13,8 @@ PIDc Rammc_PID;
 extern float Algo_Yaw_Data;
 extern float Algo_Pitch_Data;
 extern RC_ctrl_t rc_ctrl;
+gimbal_angle Pitch_Data;
+gimbal_angle Yaw_Data;
 
 void FricL_PID_Init(void)
 {
@@ -65,12 +67,12 @@ void Pitch_PID_Init(void)
     Pitch_PID.PID_Init(&Pitch_PID.SpdParam);
     Pitch_PID.PID_Init(&Pitch_PID.PosParam);
 
-    Pitch_PID.SpdParam.Kp1 = 0.012f;
-    Pitch_PID.SpdParam.Ki1 = 0.00025f;
+    Pitch_PID.SpdParam.Kp1 = 0.1f;
+    Pitch_PID.SpdParam.Ki1 = 0.000f;
     Pitch_PID.SpdParam.Kd1 = 0.0f;
     Pitch_PID.SpdParam.PID_ErrAllMax = 80000;
 
-    Pitch_PID.PosParam.Kp1 = 1.2f;
+    Pitch_PID.PosParam.Kp1 = 0.1f;
     Pitch_PID.PosParam.Ki1 = 0.0f;
     Pitch_PID.PosParam.Kd1 = 0.0f;
 
@@ -81,16 +83,16 @@ void Yaw_PID_Init(void)
     Yaw_PID.PID_Init(&Yaw_PID.SpdParam);
     Yaw_PID.PID_Init(&Yaw_PID.PosParam);
 
-    Yaw_PID.SpdParam.Kp1 = 90.0f;
-    Yaw_PID.SpdParam.Ki1 = 2.5f;
-    Yaw_PID.SpdParam.Kd1 = 70.0f;
+    Yaw_PID.SpdParam.Kp1 = 0.1f;
+    Yaw_PID.SpdParam.Ki1 = 0.0f;
+    Yaw_PID.SpdParam.Kd1 = 0.0f;
     Yaw_PID.SpdParam.PID_ErrAllMax = 80000;
     Yaw_PID.SpdParam.PID_OutStep = 700;
     Yaw_PID.SpdParam.PID_Vari_Spd_Min = 50;
     Yaw_PID.SpdParam.PID_Vari_Spd_Max = 150;
 
-    Yaw_PID.PosParam.Kp1 = 1.0f;
-    Yaw_PID.PosParam.Ki1 = 0.0f;
+    Yaw_PID.PosParam.Kp1 = 20.0f;
+    Yaw_PID.PosParam.Ki1 = 0.003f;
     Yaw_PID.PosParam.Kd1 = 0.1f;
 
 }
@@ -314,5 +316,117 @@ float DM4310_Angle_limit(float input_data,float Angle_Set,float Middle_Angle,flo
     return result;
 }
 
+float DJI_Motor_Angle_Correction(float Angle,float Middle_Angle)
+{
+    float Step;
+    float reserved_middle_Angle;
+    Step = 360.0 / 8191;
+    float Result;
+    Result = Angle - Middle_Angle;
+    if (Middle_Angle > 4095)
+    {
+        reserved_middle_Angle = Middle_Angle - 4095.5;
+        if (reserved_middle_Angle < Angle && Angle < Middle_Angle)  //负半轴
+        {
+            Result = -(Middle_Angle - Angle);
+        }
+        else if(Middle_Angle < Angle && Angle < 8191)    //正半轴
+        {
+            Result = Angle - Middle_Angle;
+        }
+        else    //正半轴
+        {
+            Result = Angle - Middle_Angle + 8191;
+        }
+    }
+    else
+    {
+        reserved_middle_Angle = 4095.5 + Middle_Angle;
+        if (Middle_Angle < Angle && Angle < reserved_middle_Angle)   //正半轴
+        {
+            Result = Angle - Middle_Angle;
+        }
+        else if(reserved_middle_Angle < Angle && Angle < 8191)  //负半轴
+        {
+            Result = -(Middle_Angle + 8191-Angle);
+        }
+        else
+        {
+            Result = -(Middle_Angle - Angle);    //负半轴
+        }
+    }
+    Result = Result / Step;
+    return Result;
+}
 
+float DM_Motor_Angle_Correction(float Angle,float Middle_Angle)
+{
+    float Step;
+    float reserved_middle_Angle;
+    Step = 360.0 / 360;
+    float Result;
+    Result = Angle - Middle_Angle;
+    if (Middle_Angle > 180)
+    {
+        reserved_middle_Angle = Middle_Angle - 180;
+        if (reserved_middle_Angle < Angle && Angle < Middle_Angle)  //负半轴
+        {
+            Result = -(Middle_Angle - Angle);
+        }
+        else if(Middle_Angle < Angle && Angle < 360)    //正半轴
+        {
+            Result = Angle - Middle_Angle;
+        }
+        else    //正半轴
+        {
+            Result = Angle - Middle_Angle + 360;
+        }
+    }
+    else
+    {
+        reserved_middle_Angle = 180 + Middle_Angle;
+        if (Middle_Angle < Angle && Angle < reserved_middle_Angle)   //正半轴
+        {
+            Result = Angle - Middle_Angle;
+        }
+        else if(reserved_middle_Angle < Angle && Angle < 360)  //负半轴
+        {
+            Result = -(Middle_Angle + 360-Angle);
+        }
+        else
+        {
+            Result = -(Middle_Angle - Angle);    //负半轴
+        }
+    }
+    Result = Result / Step;
+    return Result;
+}
+
+void Pitch_Target_Set(void)
+{
+    Pitch_Data.Target_before_Filter += (float)rc_ctrl.rc.ch[3] / 10 * TIMpiece;
+    Pitch_Data.Target = Pitch_Data.Target_before_Filter;
+    if (Pitch_Data.Target_before_Filter >= PitchAngMax)
+    {
+        Pitch_Data.Target = PitchAngMax;
+    }
+    if (Pitch_Data.Target_before_Filter <= PitchAngMin)
+    {
+        Pitch_Data.Target = PitchAngMin;
+    }
+}
+
+void Yaw_Target_Set(void)
+{
+    Yaw_Data.Target_before_Filter += (float)rc_ctrl.rc.ch[2] / 10 * TIMpiece;
+    Yaw_Data.Target = Yaw_Data.Target_before_Filter;
+    if (Yaw_Data.Target_before_Filter >= YawAngMax)
+    {
+        Yaw_Data.Target = YawAngMax;
+    }
+    if (Yaw_Data.Target_before_Filter <= YawAngMin)
+    {
+        Yaw_Data.Target = YawAngMin;
+    }
+}
 

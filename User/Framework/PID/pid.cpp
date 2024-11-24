@@ -137,12 +137,11 @@ float PIDc::PID_IncrementPID(PID_t *WhichPID)
 	* @param  WhichPID PID结构体指针
     * @retval None
 */
-float PIDc::Double_Param_Pos_PID(PID_t *SpdParam,PID_t *PosParam,float Pos_Target,float Spd_Target)
+float PIDc::Double_Param_Pos_PID(PID_t *SpdParam,PID_t *PosParam,float Pos_Input,float Pos_Target,float Spd_Target)
 {
-    SpdParam->PID_Target = Pos_Target;
-    PID_Update(PosParam,SpdParam->PID_Target,SpdParam->PID_Out);
+    PID_Update(PosParam,Pos_Input,Pos_Target);
     PID_PositionPID(PosParam);
-    PID_Update(SpdParam,SpdParam->PID_Target,SpdParam->PID_Out);  //Target如此赋值是为让位置环的Erroe_Now和input相等，Error_Now=Target - NowInput
+    PID_Update(SpdParam,Spd_Target,PosParam->PID_Out);  //Target如此赋值是为让位置环的Erroe_Now和input相等，Error_Now=Target - NowInput
     PID_PositionPID(SpdParam);
 
     return PosParam->PID_Out;

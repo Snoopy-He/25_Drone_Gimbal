@@ -357,7 +357,7 @@ void INS_Task(void const * argument)
         //usart_printf("%f\r\n",QEKF_INS.Roll);
         INS_task();
 
-        vTaskDelayUntil(&CurrentTime, 5 / portTICK_RATE_MS);
+        vTaskDelayUntil(&CurrentTime, 2 / portTICK_RATE_MS);
     }
 }
 
