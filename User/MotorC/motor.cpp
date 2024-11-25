@@ -67,14 +67,15 @@ void Pitch_PID_Init(void)
     Pitch_PID.PID_Init(&Pitch_PID.SpdParam);
     Pitch_PID.PID_Init(&Pitch_PID.PosParam);
 
-    Pitch_PID.SpdParam.Kp1 = 0.1f;
-    Pitch_PID.SpdParam.Ki1 = 0.000f;
-    Pitch_PID.SpdParam.Kd1 = 0.0f;
+    Pitch_PID.PosParam.Kp1 = 1.2f;
+    Pitch_PID.PosParam.Ki1 = 0.006f;
+    Pitch_PID.PosParam.Kd1 = 0.6f;
+
+    Pitch_PID.SpdParam.Kp1 = 0.8f;
+    Pitch_PID.SpdParam.Ki1 = 0.0f;
+    Pitch_PID.SpdParam.Kd1 = 0.1f;
     Pitch_PID.SpdParam.PID_ErrAllMax = 80000;
 
-    Pitch_PID.PosParam.Kp1 = 0.1f;
-    Pitch_PID.PosParam.Ki1 = 0.0f;
-    Pitch_PID.PosParam.Kd1 = 0.0f;
 
 }
 
@@ -404,13 +405,12 @@ float DM_Motor_Angle_Correction(float Angle,float Middle_Angle)
 
 void Pitch_Target_Set(void)
 {
-    Pitch_Data.Target_before_Filter += (float)rc_ctrl.rc.ch[3] / 10 * TIMpiece;
-    Pitch_Data.Target = Pitch_Data.Target_before_Filter;
-    if (Pitch_Data.Target_before_Filter >= PitchAngMax)
+    Pitch_Data.Target += (float)rc_ctrl.rc.ch[3] / 5 * TIMpiece;
+    if (Pitch_Data.Target >= PitchAngMax)
     {
         Pitch_Data.Target = PitchAngMax;
     }
-    if (Pitch_Data.Target_before_Filter <= PitchAngMin)
+    if (Pitch_Data.Target <= PitchAngMin)
     {
         Pitch_Data.Target = PitchAngMin;
     }
@@ -418,13 +418,12 @@ void Pitch_Target_Set(void)
 
 void Yaw_Target_Set(void)
 {
-    Yaw_Data.Target_before_Filter += (float)rc_ctrl.rc.ch[2] / 10 * TIMpiece;
-    Yaw_Data.Target = Yaw_Data.Target_before_Filter;
-    if (Yaw_Data.Target_before_Filter >= YawAngMax)
+    Yaw_Data.Target += (float)rc_ctrl.rc.ch[2] / 10 * TIMpiece;
+    if (Yaw_Data.Target >= YawAngMax)
     {
         Yaw_Data.Target = YawAngMax;
     }
-    if (Yaw_Data.Target_before_Filter <= YawAngMin)
+    if (Yaw_Data.Target <= YawAngMin)
     {
         Yaw_Data.Target = YawAngMin;
     }

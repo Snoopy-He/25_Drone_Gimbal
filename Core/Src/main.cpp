@@ -22,7 +22,7 @@ int main(void)
     Debug_Init();
     delay_init();
     DWT_Init(168);
-    Middle_Angle_Set(8135.0f,-90.0f);     //电机反馈原始数据，不必换算
+    Middle_Angle_Set(8135.0f,-50.0f);     //电机反馈原始数据，不必换算
 
     os_Init();
 

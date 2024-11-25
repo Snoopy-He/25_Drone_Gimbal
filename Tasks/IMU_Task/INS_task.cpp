@@ -346,8 +346,6 @@ void INS_Task(void const * argument)
     };
 
     INS_Init();
-    usart_printf("%f\r\n",QEKF_INS.IMU_QuaternionEKF.xhat_data[0]);
-    INS_task();
 
 /* Infinite loop */
     for (;;)

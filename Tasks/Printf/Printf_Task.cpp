@@ -50,8 +50,8 @@ void Printf_Task(void const * argument)
         //usart_printf("%f,%f\r\n",(float)PitchMotor_Data.Speed/3.1415926/2*60,(float)rc_ctrl.rc.ch[3]/100);
         //usart_printf("%f,%f\r\n",(float)rc_ctrl.rc.ch[3] / 20,(float)PitchMotor_Data.Speed*30/3.1415926);
         //usart_printf("%f\r\n",C_IMU_Data.Speed.Roll);
-        usart_printf("%f,%f\r\n",C_IMU_Data.Angle.Yaw,Yaw_Data.Algo_Data);
-        //usart_printf("%f\r\n",C_IMU_Data.Angle.Roll);
+        //usart_printf("%f,%f\r\n",C_IMU_Data.Angle.Yaw,Yaw_Data.Algo_Data);
+        usart_printf("%f,%f\r\n",C_IMU_Data.Angle.Roll,Pitch_Data.Target);
         //usart_printf("%.3f,%.3f\r\n",C_IMU_Data.Speed.Roll,(float)rc_ctrl.rc.ch[3] / 10);
         //usart_printf("%f,%f,%f,%f,%f,%f\r\n",BMI088.Gyro[0],BMI088.Gyro[1],BMI088.Gyro[2],BMI088.Accel[0],BMI088.Accel[1],BMI088.Accel[2]);
         vTaskDelayUntil(&CurrentTime, 2 / portTICK_RATE_MS);
