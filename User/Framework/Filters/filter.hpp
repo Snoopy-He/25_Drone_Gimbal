@@ -6,7 +6,7 @@
 #ifdef __cplusplus
 
 #include <algorithm>
-#include <string.h>
+#include "cstring"
 #include "kalman.hpp"
 #include <cmath>
 

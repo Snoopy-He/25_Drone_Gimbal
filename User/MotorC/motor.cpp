@@ -69,11 +69,11 @@ void Pitch_PID_Init(void)
 
     Pitch_PID.PosParam.Kp1 = 1.2f;
     Pitch_PID.PosParam.Ki1 = 0.006f;
-    Pitch_PID.PosParam.Kd1 = 0.6f;
+    Pitch_PID.PosParam.Kd1 = 1.0f;
 
-    Pitch_PID.SpdParam.Kp1 = 0.8f;
+    Pitch_PID.SpdParam.Kp1 = 1.0f;
     Pitch_PID.SpdParam.Ki1 = 0.0f;
-    Pitch_PID.SpdParam.Kd1 = 0.1f;
+    Pitch_PID.SpdParam.Kd1 = 0.2f;
     Pitch_PID.SpdParam.PID_ErrAllMax = 80000;
 
 
@@ -84,6 +84,10 @@ void Yaw_PID_Init(void)
     Yaw_PID.PID_Init(&Yaw_PID.SpdParam);
     Yaw_PID.PID_Init(&Yaw_PID.PosParam);
 
+    Yaw_PID.PosParam.Kp1 = 90.0f;
+    Yaw_PID.PosParam.Ki1 = 1.5f;
+    Yaw_PID.PosParam.Kd1 = 10.0f;
+
     Yaw_PID.SpdParam.Kp1 = 0.1f;
     Yaw_PID.SpdParam.Ki1 = 0.0f;
     Yaw_PID.SpdParam.Kd1 = 0.0f;
@@ -91,10 +95,6 @@ void Yaw_PID_Init(void)
     Yaw_PID.SpdParam.PID_OutStep = 700;
     Yaw_PID.SpdParam.PID_Vari_Spd_Min = 50;
     Yaw_PID.SpdParam.PID_Vari_Spd_Max = 150;
-
-    Yaw_PID.PosParam.Kp1 = 20.0f;
-    Yaw_PID.PosParam.Ki1 = 0.003f;
-    Yaw_PID.PosParam.Kd1 = 0.1f;
 
 }
 
